@@ -4,8 +4,8 @@ async function main() {
   const execution = initHTML.match(/(?<=name="execution" value=").*?(?=")/)[0];
 
   const data = new URLSearchParams();
-  data.append("username", process.env.CAS_USERNAME);
-  data.append("password", process.env.CAS_PASSWORD);
+  data.append("username", Deno.env.get("CAS_USERNAME"));
+  data.append("password", Deno.env.get("CAS_PASSWORD"));
   data.append("_eventId", "submit");
   data.append("execution", execution);
 

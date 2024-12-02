@@ -1,4 +1,4 @@
-const token = process.env.CAS_TOKEN;
+const token = Deno.env.get("CAS_TOKEN");
 
 async function main() {
   const response = await fetch("https://ident.univ-amu.fr/login?service=http://localhost", {
