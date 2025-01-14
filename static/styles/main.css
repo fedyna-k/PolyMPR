@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root {
+  color-scheme: light dark;  
+  
+  --dark-background-color: rgb(30, 30, 42);
+  --dark-background-color-ui: rgb(50, 50, 62);
+  --dark-foreground: rgb(241, 241, 255);
+  --dark-foreground-dim: rgb(171, 171, 179);
+
+  --light-background-color: rgb(225, 225, 237);
+  --light-background-color-ui: rgb(241, 241, 255);
+  --light-foreground: rgb(30, 30, 42);
+  --light-foreground-dim: rgb(171, 171, 179);
+
+  --accent-color: rgb(38, 157, 217);
+
+  --loader-size: 0.5em;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Jetbrains Mono";
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background-color: light-dark(var(--light-background-color), var(--dark-background-color));
+  color: light-dark(var(--light-foreground), var(--dark-foreground));
+}
+
+header {
+  padding: 0.5em 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header > nav {
+  display: flex;
+  gap: 1em;
+}
+
+footer {
+  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  color: light-dark(var(--light-foreground-dim), var(--dark-foreground-dim));
+}
