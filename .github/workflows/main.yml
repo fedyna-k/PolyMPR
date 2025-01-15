@@ -1,0 +1,30 @@
+name: 'Check Deno code'
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  check-code:
+    name: 'Check Deno code'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.x
+
+    - name: Check formatting
+      run: deno fmt --check
+
+    - name: Check linting
+      run: deno lint
