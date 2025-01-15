@@ -1,8 +1,10 @@
-import { useSignal } from "@preact/signals";
-import Counter from "../islands/Counter.tsx";
+import { FreshContext } from "$fresh/server.ts";
 
-export default function Home() {
+// deno-lint-ignore require-await
+export default async function Home(_request: Request, _context: FreshContext) {
   return (
-    <h1>PolyMPR</h1>
+    <>
+      <h2>Welcome to PolyMPR!</h2>
+    </>
   );
 }

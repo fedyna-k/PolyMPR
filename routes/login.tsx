@@ -1,34 +1,45 @@
 import { Handlers } from "$fresh/server.ts";
 import { State } from "./_middleware.ts";
-import { parse, type XmlNode } from "@melvdouc/xml-parser";
+import {
+  parse,
+  type RegularTagNode,
+  type TextNode,
+} from "@melvdouc/xml-parser";
 import { createJwt } from "@popov/jwt";
 import { setCookie } from "$std/http/cookie.ts";
-
 
 const SERVICE = "https://localhost/login";
 const CAS = "https://ident.univ-amu.fr/cas";
 
+interface CasTagNode extends RegularTagNode {
+  children: [TextNode];
+}
 
-function getTag(tag: XmlNode): [string, string] {
+interface CasGroupNode extends RegularTagNode {
+  children: CasTagNode[];
+}
+
+interface CasResponse extends RegularTagNode {
+  children: [TextNode, CasGroupNode];
+}
+
+function getTag(tag: CasTagNode): [string, string] {
   return [
     tag.tagName.replace("cas:", ""),
-    tag.children[0].value
+    tag.children[0].value,
   ];
 }
 
-
-async function createUserJWT(casResponse: XmlNode): Promise<string> {
+function createUserJWT(casResponse: CasResponse): Promise<string> {
   const nodes = casResponse.children[1].children.map(getTag);
-  const fullUserInfos = {};
+  const fullUserInfos: Record<string, string | string[]> = {};
 
   nodes.forEach(([key, value]) => {
     if (fullUserInfos[key] && Array.isArray(fullUserInfos[key])) {
       fullUserInfos[key].push(value);
-    }
-    else if (fullUserInfos[key]) {
+    } else if (fullUserInfos[key]) {
       fullUserInfos[key] = [fullUserInfos[key], value];
-    }
-    else {
+    } else {
       fullUserInfos[key] = value;
     }
   });
@@ -41,30 +52,32 @@ async function createUserJWT(casResponse: XmlNode): Promise<string> {
     iat: now,
     exp: now + oneHour,
     aud: "PolyMPR",
-    user: fullUserInfos
+    user: fullUserInfos,
   };
 
   const key = "NEED TO CHANGE THIS KEY FURTHER IN DEV";
   return createJwt(payload, key);
 }
 
-
+// deno-lint-ignore no-explicit-any
 export const handler: Handlers<any, State> = {
   async GET(request, context) {
     const url = new URL(request.url);
     const ticket = url.searchParams.get("ticket");
 
     if (ticket) {
-      const response = await fetch(`${CAS}/serviceValidate?service=${SERVICE}&ticket=${ticket}`);
-      const body = parse(await response.text(), "application/xml");
-      const casResponse = body[0].children[0];
+      const response = await fetch(
+        `${CAS}/serviceValidate?service=${SERVICE}&ticket=${ticket}`,
+      );
+      const body = parse(await response.text()) as [RegularTagNode];
+      const casResponse = body[0].children[0] as CasResponse;
 
       if (casResponse.tagName != "cas:authenticationSuccess") {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: `${CAS}/login?service=${SERVICE}`
-          }
+            Location: `${CAS}/login?service=${SERVICE}`,
+          },
         });
       }
 
@@ -72,13 +85,13 @@ export const handler: Handlers<any, State> = {
 
       setCookie(headers, {
         name: "sessionToken",
-        value: await createUserJWT(casResponse)
+        value: await createUserJWT(casResponse),
       });
       headers.set("Location", "/apps");
 
       return new Response(null, {
         status: 302,
-        headers
+        headers,
       });
     }
 
@@ -86,17 +99,16 @@ export const handler: Handlers<any, State> = {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: "/apps"
-        }
+          Location: "/apps",
+        },
       });
-    }
-    else {
+    } else {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `${CAS}/login?service=${SERVICE}`
-        }
+          Location: `${CAS}/login?service=${SERVICE}`,
+        },
       });
     }
-  }
+  },
 };

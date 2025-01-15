@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
-
 :root {
-  color-scheme: light dark;  
+  color-scheme: dark;  
   
   --dark-background-color: rgb(30, 30, 42);
   --dark-background-color-ui: rgb(50, 50, 62);
@@ -11,9 +9,10 @@
   --light-background-color: rgb(225, 225, 237);
   --light-background-color-ui: rgb(241, 241, 255);
   --light-foreground: rgb(30, 30, 42);
-  --light-foreground-dim: rgb(171, 171, 179);
+  --light-foreground-dim: rgb(105, 105, 110);
 
-  --accent-color: rgb(38, 157, 217);
+  --dark-accent-color: rgb(84, 174, 219);
+  --light-accent-color: rgb(0, 109, 163);
 
   --loader-size: 0.5em;
 }
@@ -53,4 +52,36 @@ footer {
   display: flex;
   justify-content: center;
   color: light-dark(var(--light-foreground-dim), var(--dark-foreground-dim));
+  font-style: italic;
+}
+
+section {
+  margin: 0 1.5em;
+  padding: 0.5em 1.5em;
+  background-color: light-dark(var(--light-background-color-ui), var(--dark-background-color-ui));
+  border-radius: 0.5em;
+}
+
+a {
+  position: relative;
+  text-decoration: none;
+  color: light-dark(var(--light-accent-color), var(--dark-accent-color));
+}
+
+a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-color: light-dark(var(--light-accent-color), var(--dark-accent-color));
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 100ms ease-in-out;
+}
+
+a:focus::before, a:hover::before {
+  transform-origin: left;
+  transform: scaleX(1);
 }

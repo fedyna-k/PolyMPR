@@ -2,13 +2,12 @@ import { Handlers } from "$fresh/server.ts";
 import { State } from "./_middleware.ts";
 import { deleteCookie } from "$std/http/cookie.ts";
 
-
 const SERVICE = "https://localhost/";
 const CAS = "https://ident.univ-amu.fr/cas";
 
-
+// deno-lint-ignore no-explicit-any
 export const handler: Handlers<any, State> = {
-  async GET(request, context) {
+  GET(_request, context) {
     if (context.state.isAuthenticated) {
       const headers = new Headers();
 
@@ -17,16 +16,15 @@ export const handler: Handlers<any, State> = {
 
       return new Response(null, {
         status: 302,
-        headers
+        headers,
       });
-    }
-    else {
+    } else {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: "/"
-        }
+          Location: "/",
+        },
       });
     }
-  }
+  },
 };
