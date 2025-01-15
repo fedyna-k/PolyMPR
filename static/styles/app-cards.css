@@ -10,6 +10,7 @@
   padding: 1em;
   border-radius: 0.5em;
   font-weight: 700;
+  position: relative;
 
   border: 1px solid
     light-dark(
@@ -47,4 +48,41 @@
 
 .app-card > span {
   font-size: 4em;
+}
+
+.app-card > span.info {
+  position: absolute;
+  top: 0.25em;
+  right: 0.25em;
+  font-size: 1.5em;
+}
+
+.app-card > span.info::before {
+  font-family: var(--font-family-text);
+  content: attr(data-hint);
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  z-index: 99999;
+  font-size: 1rem;
+  padding: 1em;
+  color: light-dark(
+    var(--light-foreground),
+    var(--dark-foreground)
+  );
+  background-color: light-dark(
+    var(--light-background-color),
+    var(--dark-background-color)
+  );
+  border: 1px solid
+    light-dark(
+      var(--light-foreground-dimmer),
+      var(--dark-foreground-dimmer)
+    );
+  border-radius: 0.5em;
+  display: none;
+}
+
+.app-card > span.info:hover::before {
+  display: block;
 }

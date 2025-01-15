@@ -10,6 +10,9 @@ export default function AppCard(props: AppCardProps) {
     <a class="app-card" href={`/${props.href}`} f-client-nav={false}>
       <span class="material-symbols-outlined">{props.app.icon}</span>
       <p>{props.app.name}</p>
+      <span class="material-symbols-outlined info" data-hint={props.app.hint}>
+        info
+      </span>
     </a>
   );
 }

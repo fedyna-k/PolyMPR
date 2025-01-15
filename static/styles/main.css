@@ -4,10 +4,12 @@
   --dark-background-color: hsl(250, 50%, 8%);
   --dark-foreground: hsl(250, 10%, 90%);
   --dark-foreground-dim: hsl(250, 10%, 70%);
+  --dark-foreground-dimmer: hsl(250, 10%, 25%);
 
   --light-background-color: hsl(250, 50%, 92%);
   --light-foreground: hsl(250, 10%, 10%);
   --light-foreground-dim: hsl(250, 10%, 30%);
+  --light-foreground-dimmer: hsl(250, 10%, 75%);
 
   --dark-accent-color: hsl(150, 70%, 50%);
   --dark-strong-color: hsl(50, 70%, 50%);
@@ -48,13 +50,9 @@ header {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid
-    color-mix(
-      in srgb,
-      light-dark(
-        var(--light-foreground-dim),
-        var(--dark-foreground-dim)
-      ) 30%,
-      transparent
+    light-dark(
+      var(--light-foreground-dimmer),
+      var(--dark-foreground-dimmer)
     );
 
   font-weight: 700;
