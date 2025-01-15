@@ -1,6 +1,6 @@
 :root {
-  color-scheme: dark;  
-  
+  color-scheme: light;
+
   --dark-background-color: rgb(30, 30, 42);
   --dark-background-color-ui: rgb(50, 50, 62);
   --dark-foreground: rgb(241, 241, 255);
@@ -31,7 +31,10 @@ body {
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  background-color: light-dark(var(--light-background-color), var(--dark-background-color));
+  background-color: light-dark(
+    var(--light-background-color),
+    var(--dark-background-color)
+  );
   color: light-dark(var(--light-foreground), var(--dark-foreground));
 }
 
@@ -58,7 +61,10 @@ footer {
 section {
   margin: 0 1.5em;
   padding: 0.5em 1.5em;
-  background-color: light-dark(var(--light-background-color-ui), var(--dark-background-color-ui));
+  background-color: light-dark(
+    var(--light-background-color-ui),
+    var(--dark-background-color-ui)
+  );
   border-radius: 0.5em;
 }
 
@@ -75,7 +81,10 @@ a::before {
   right: 0;
   bottom: 0;
   height: 2px;
-  background-color: light-dark(var(--light-accent-color), var(--dark-accent-color));
+  background-color: light-dark(
+    var(--light-accent-color),
+    var(--dark-accent-color)
+  );
   transform-origin: right;
   transform: scaleX(0);
   transition: transform 100ms ease-in-out;

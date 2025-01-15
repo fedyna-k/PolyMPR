@@ -1,8 +1,4 @@
-export interface AppProperties {
-  name: string;
-  icon: string;
-  hint: string;
-}
+import { AppProperties } from "$root/defaults/interfaces.ts";
 
 type AppNavigatorProps = {
   apps: Record<string, AppProperties>;

@@ -1,12 +1,2 @@
-type ModulesProps = Record<string | number | symbol, never>;
-
-export default function Modules(_props: ModulesProps) {
-  return (
-    <>
-      <h2>All PolyMPR modules</h2>
-      <nav>
-        
-      </nav>
-    </>
-  );
-}
+import makeIndex from "$root/defaults/makeIndex.ts";
+export default makeIndex(import.meta.dirname!);

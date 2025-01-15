@@ -1,8 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
-import { Partial } from "$fresh/runtime.ts";
-import { State } from "./_middleware.ts";
-import Header from "./(_components)/Header.tsx";
-import Footer from "./(_components)/Footer.tsx";
+import { State } from "$root/routes/_middleware.ts";
+import Header from "$root/routes/(_components)/Header.tsx";
+import Footer from "$root/routes/(_components)/Footer.tsx";
 
 // deno-lint-ignore require-await
 export default async function App(
@@ -20,13 +19,12 @@ export default async function App(
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
         <link rel="stylesheet" href="/styles/main.css" />
+        <link rel="stylesheet" href="/styles/app.css" />
       </head>
       <body f-client-nav>
         <Header link={link} />
         <section>
-          <Partial name="body">
-            <context.Component />
-          </Partial>
+          <context.Component />
         </section>
         <Footer />
       </body>

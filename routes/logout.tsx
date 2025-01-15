@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { State } from "./_middleware.ts";
+import { State } from "$root/routes/_middleware.ts";
 import { deleteCookie } from "$std/http/cookie.ts";
 
 const SERVICE = "https://localhost/";
