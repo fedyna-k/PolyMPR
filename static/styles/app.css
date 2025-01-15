@@ -48,3 +48,10 @@
   transform: scaleY(1);
   transform-origin: top;
 }
+
+@media screen and (max-width: 1024px) {
+  #app {
+    grid-template-rows: auto 1fr;
+    grid-template-columns: none;
+  }
+}
