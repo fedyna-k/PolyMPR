@@ -10,7 +10,7 @@ const properties: AppProperties = {
     students: "Students management",
   },
   adminOnly: ["courses", "students"],
-  hint: "Gestionnaire de note"
+  hint: "Gestionnaire de note",
 };
 
 export default properties;

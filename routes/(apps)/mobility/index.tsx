@@ -5,7 +5,6 @@ export default function Modules(_props: ModulesProps) {
     <>
       <h2>All PolyMPR modules</h2>
       <nav>
-        
       </nav>
     </>
   );
