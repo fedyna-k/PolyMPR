@@ -1,8 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
-import { Partial } from "$fresh/runtime.ts";
-import { State } from "./_middleware.ts";
-import Header from "./(_components)/Header.tsx";
-import Footer from "./(_components)/Footer.tsx";
+import { State } from "$root/routes/_middleware.ts";
+import Header from "$root/routes/(_components)/Header.tsx";
+import Footer from "$root/routes/(_components)/Footer.tsx";
 
 // deno-lint-ignore require-await
 export default async function App(
@@ -24,9 +23,7 @@ export default async function App(
       <body f-client-nav>
         <Header link={link} />
         <section>
-          <Partial name="body">
-            <context.Component />
-          </Partial>
+          <context.Component />
         </section>
         <Footer />
       </body>

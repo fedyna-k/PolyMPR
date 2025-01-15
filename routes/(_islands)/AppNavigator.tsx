@@ -1,6 +1,8 @@
 export interface AppProperties {
   name: string;
   icon: string;
+  pages: Record<string, string>;
+  adminOnly: string[];
 }
 
 type AppNavigatorProps = {

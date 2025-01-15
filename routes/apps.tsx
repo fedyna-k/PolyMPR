@@ -1,11 +1,15 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import AppNavigator, { AppProperties } from "./(_islands)/AppNavigator.tsx";
+import AppNavigator, { AppProperties } from "$root/routes/(_islands)/AppNavigator.tsx";
 
 export const handler: Handlers = {
   async GET(_request, context) {
     const apps: Record<string, AppProperties> = {};
 
     for await (const appDir of Deno.readDir("routes/(apps)")) {
+      if (appDir.isFile) {
+        continue;
+      }
+
       try {
         const properties: AppProperties = (await import(
           `./(apps)/${appDir.name}/(_props)/props.ts`
