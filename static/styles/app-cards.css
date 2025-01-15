@@ -1,0 +1,50 @@
+.app-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+}
+
+.app-card {
+  text-align: center;
+  padding: 1em;
+  border-radius: 0.5em;
+  font-weight: 700;
+
+  border: 1px solid
+    light-dark(
+      var(--light-strong-color),
+      var(--dark-strong-color)
+    );
+
+  color: light-dark(
+    var(--light-strong-color),
+    var(--dark-strong-color)
+  );
+
+  transition: all 200ms ease-in-out;
+}
+
+.app-card::before {
+  all: unset;
+}
+
+.app-card:hover, .app-card:focus {
+  background-color: light-dark(
+    var(--light-strong-color),
+    var(--dark-strong-color)
+  );
+
+  color: light-dark(
+    var(--light-background-color),
+    var(--dark-background-color)
+  );
+}
+
+.app-card > p {
+  margin: 0;
+}
+
+.app-card > span {
+  font-size: 4em;
+}

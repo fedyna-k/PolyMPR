@@ -26,7 +26,7 @@ export const handler: Handlers = {
 };
 
 // deno-lint-ignore require-await
-export default async function About(_request: Request, context: FreshContext) {
+export default async function Apps(_request: Request, context: FreshContext) {
   return (
     <>
       <AppNavigator apps={context.data} />
