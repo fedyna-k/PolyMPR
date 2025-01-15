@@ -3,6 +3,7 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
+import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
 import * as $_apps_notes_partials_admin_courses from "./routes/(apps)/notes/partials/(admin)/courses.tsx";
 import * as $_apps_notes_partials_admin_students from "./routes/(apps)/notes/partials/(admin)/students.tsx";
@@ -24,6 +25,7 @@ import type { Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/(apps)/_layout.tsx": $_apps_layout,
+    "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
     "./routes/(apps)/notes/index.tsx": $_apps_notes_index,
     "./routes/(apps)/notes/partials/(admin)/courses.tsx":
       $_apps_notes_partials_admin_courses,
