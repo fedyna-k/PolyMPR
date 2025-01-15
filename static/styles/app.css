@@ -13,6 +13,7 @@
 
 #app > nav > a {
   padding: 0.25em 0.5em;
+  color: light-dark(var(--light-foreground), var(--dark-foreground));
 }
 
 #app > nav > a::before {
@@ -40,6 +41,7 @@
     ) 10%,
     transparent
   );
+  font-weight: 700;
 }
 
 #app > nav > a[data-current="true"]::before {

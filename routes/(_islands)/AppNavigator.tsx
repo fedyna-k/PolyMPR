@@ -9,17 +9,19 @@ export default function AppNavigator(props: AppNavigatorProps) {
   if (!props.apps) {
     return (
       <>
-        <h2>Welcome to PolyMPR!</h2>
-        <p>No apps available.</p>
+        <h2>App catalog</h2>
+        <p>
+          No apps are currently available. Please contact the maintainers team
+          to address this issue.
+        </p>
       </>
     );
   }
 
   return (
     <>
-      <h2>Welcome to PolyMPR!</h2>
-      <h3>app list</h3>
-      <div className="app-list">
+      <h2>App catalog</h2>
+      <div class="app-list">
         {Object.entries(props.apps).map(([key, app]) => (
           <AppCard href={key} app={app} />
         ))}

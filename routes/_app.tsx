@@ -18,7 +18,7 @@ export default async function App(
         <title>PolyMPR</title>
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
         />
         <link
           rel="stylesheet"
@@ -26,6 +26,7 @@ export default async function App(
         />
         <link rel="stylesheet" href="/styles/main.css" />
         <link rel="stylesheet" href="/styles/app.css" />
+        <link rel="stylesheet" href="styles/app-cards.css" />
       </head>
       <body f-client-nav>
         <Header link={link} />

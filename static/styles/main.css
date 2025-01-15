@@ -1,25 +1,28 @@
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
 
-  --dark-background-color: rgb(30, 30, 42);
-  --dark-background-color-ui: rgb(50, 50, 62);
-  --dark-foreground: rgb(241, 241, 255);
-  --dark-foreground-dim: rgb(171, 171, 179);
+  --dark-background-color: hsl(250, 50%, 8%);
+  --dark-foreground: hsl(250, 10%, 90%);
+  --dark-foreground-dim: hsl(250, 10%, 70%);
 
-  --light-background-color: rgb(225, 225, 237);
-  --light-background-color-ui: rgb(241, 241, 255);
-  --light-foreground: rgb(30, 30, 42);
-  --light-foreground-dim: rgb(105, 105, 110);
+  --light-background-color: hsl(250, 50%, 92%);
+  --light-foreground: hsl(250, 10%, 10%);
+  --light-foreground-dim: hsl(250, 10%, 30%);
 
-  --dark-accent-color: rgb(84, 174, 219);
-  --light-accent-color: rgb(0, 109, 163);
+  --dark-accent-color: hsl(150, 70%, 50%);
+  --dark-strong-color: hsl(50, 70%, 50%);
+  --dark-error-color: hsl(50, 70%, 50%);
 
-  --loader-size: 0.5em;
+  --light-accent-color: hsl(230, 70%, 50%);
+  --light-strong-color: hsl(210, 70%, 50%);
+  --light-error-color: hsl(210, 70%, 50%);
+
+  --font-family-text: "Inter", sans-serif;
 }
 
 * {
   box-sizing: border-box;
-  font-family: "Jetbrains Mono";
+  font-family: var(--font-family-text);
 }
 
 html, body {
@@ -36,13 +39,29 @@ body {
     var(--dark-background-color)
   );
   color: light-dark(var(--light-foreground), var(--dark-foreground));
+  font-weight: 300;
 }
 
 header {
-  padding: 0.5em 2em;
+  padding: 0em 2em;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid
+    color-mix(
+      in srgb,
+      light-dark(
+        var(--light-foreground-dim),
+        var(--dark-foreground-dim)
+      ) 30%,
+      transparent
+    );
+
+  font-weight: 700;
+}
+
+header > h1 {
+  font-size: large;
 }
 
 header > nav {
@@ -56,16 +75,11 @@ footer {
   justify-content: center;
   color: light-dark(var(--light-foreground-dim), var(--dark-foreground-dim));
   font-style: italic;
+  font-size: small;
 }
 
 section {
-  margin: 0 1.5em;
-  padding: 0.5em 1.5em;
-  background-color: light-dark(
-    var(--light-background-color-ui),
-    var(--dark-background-color-ui)
-  );
-  border-radius: 0.5em;
+  padding: 0.5em 2em;
 }
 
 a {
