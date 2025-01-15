@@ -1,5 +1,6 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import AppNavigator, { AppProperties } from "$root/routes/(_islands)/AppNavigator.tsx";
+import { AppProperties } from "$root/defaults/interfaces.ts";
+import AppNavigator from "$root/routes/(_islands)/AppNavigator.tsx";
 
 export const handler: Handlers = {
   async GET(_request, context) {

@@ -1,4 +1,4 @@
-import { AppProperties } from "$root/routes/(_islands)/AppNavigator.tsx";
+import { AppProperties } from "$root/defaults/interfaces.ts";
 
 const properties: AppProperties = {
   name: "PolyNotes",
@@ -7,9 +7,9 @@ const properties: AppProperties = {
     index: "Homepage",
     notes: "Notes",
     courses: "Courses management",
-    students: "Students management"
+    students: "Students management",
   },
-  adminOnly: [ "courses", "students" ]
+  adminOnly: ["courses", "students"],
 };
 
 export default properties;

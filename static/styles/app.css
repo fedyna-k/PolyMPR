@@ -1,0 +1,48 @@
+#app {
+  margin: 0;
+  padding: 1em 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1em;
+}
+
+#app > nav {
+  display: flex;
+  flex-direction: column;
+}
+
+#app > nav > a {
+  padding: 0.25em 0.5em;
+}
+
+#app > nav > a::before {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  height: auto;
+  right: unset;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+#app > nav > a:focus::before, #app > nav > a:hover::before {
+  transform: scaleY(1);
+  transform-origin: top;
+}
+
+#app > nav > a[data-current="true"] {
+  background-color: color-mix(
+    in srgb,
+    light-dark(
+      var(--light-accent-color),
+      var(--dark-accent-color)
+    ) 10%,
+    transparent
+  );
+}
+
+#app > nav > a[data-current="true"]::before {
+  transform: scaleY(1);
+  transform-origin: top;
+}
