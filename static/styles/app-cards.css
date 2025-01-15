@@ -6,11 +6,15 @@
 }
 
 .app-card {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 10em;
+  height: 10em;
   padding: 1em;
   border-radius: 0.5em;
   font-weight: 700;
-  position: relative;
 
   border: 1px solid
     light-dark(
@@ -47,7 +51,7 @@
 }
 
 .app-card > span {
-  font-size: 4em;
+  font-size: 6em;
 }
 
 .app-card > span.info {
