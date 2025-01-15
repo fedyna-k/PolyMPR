@@ -2,7 +2,7 @@ import { JSX } from "preact";
 import { Partial } from "$fresh/runtime.ts";
 import { RouteConfig } from "$fresh/server.ts";
 
-export function getConfig(): RouteConfig {
+export function getPartialsConfig(): RouteConfig {
   return {
     skipAppWrapper: true,
     skipInheritedLayouts: true,
