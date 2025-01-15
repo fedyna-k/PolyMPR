@@ -3,25 +3,14 @@ export interface AppProperties {
   icon: string;
 }
 
-type AppNavigatorProps = Record<string | number | symbol, never>;
+type AppNavigatorProps = {
+  apps: Record<string, AppProperties>;
+};
 
-export default async function AppNavigator(_props: AppNavigatorProps) {
-  
-  const apps: Record<string, AppProperties> = {};
-
-  for await (const appDir of Deno.readDir("../(apps)")) {
-    try {
-      const properties: AppProperties = await import(`../(apps)/${appDir.name}/(_props)/props.ts`);
-      apps[appDir.name] = properties;
-    }
-    catch (error) {
-      console.error(`Couldn't import app "${appDir.name}": ${error}`);
-    }
-  }
-
+export default function AppNavigator(props: AppNavigatorProps) {
   return (
     <>
-      <p>{JSON.stringify(apps)}</p>
+      <p>{JSON.stringify(props.apps)}</p>
     </>
   );
 }
