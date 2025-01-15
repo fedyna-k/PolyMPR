@@ -1,6 +1,7 @@
 export interface AppProperties {
   name: string;
   icon: string;
+  hint: string;
 }
 
 type AppNavigatorProps = {

@@ -2,6 +2,7 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
+import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
@@ -17,6 +18,7 @@ import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
+    "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
     "./routes/(apps)/notes/index.tsx": $_apps_notes_index,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
