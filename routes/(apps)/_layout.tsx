@@ -17,9 +17,11 @@ export default async function AppLayout(
   return (
     <section id="app">
       <Navbar currentApp={currentApp} pages={properties.pages} />
-      <Partial name="body">
-        <context.Component />
-      </Partial>
+      <section id="app-body">
+        <Partial name="body">
+          <context.Component />
+        </Partial>
+      </section>
     </section>
   );
 }
