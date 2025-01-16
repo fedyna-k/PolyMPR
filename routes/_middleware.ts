@@ -1,6 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { getCookies } from "$std/http/cookie.ts";
-import { isJwtValid } from "@popov/jwt";
+import { getJwtPayload, isJwtValid } from "@popov/jwt";
+import { LoginJWT } from "$root/routes/login.tsx";
 
 const PUBLIC_ROUTES = [
   "/",
@@ -11,6 +12,8 @@ const PUBLIC_ROUTES = [
   "/contact",
 ];
 
+const jwtKeyCache: Record<string, string> = {};
+
 export interface State {
   isAuthenticated: boolean;
 }
@@ -19,15 +22,33 @@ function isRoutePublic(route: string) {
   return PUBLIC_ROUTES.includes(route) || route.match(/\..+$/);
 }
 
+export function getKey(user: string): string {
+  if (!jwtKeyCache[user]) {
+    const keyBuffer = new Uint8Array(32);
+    crypto.getRandomValues(keyBuffer);
+    jwtKeyCache[user] = new TextDecoder().decode(keyBuffer);
+  }
+
+  return jwtKeyCache[user];
+}
+
 export const handler = [
   async function checkAuthentication(
     request: Request,
     context: FreshContext<State>,
   ) {
     const cookies = getCookies(request.headers);
+    if (!cookies["sessionToken"]) {
+      context.state.isAuthenticated = false;
+      return await context.next();
+    }
+
+    const content = getJwtPayload(cookies["sessionToken"]) as LoginJWT;
+    const key = getKey(content.user.uid as string);
+
     context.state.isAuthenticated = await isJwtValid(
-      cookies["sessionToken"] ?? "",
-      "NEED TO CHANGE THIS KEY FURTHER IN DEV",
+      cookies["sessionToken"],
+      key,
     );
 
     return await context.next();

@@ -1,5 +1,7 @@
 import { defineConfig } from "$fresh/server.ts";
+import ensureDatabases from "$root/databases/ensure.ts";
 
+await ensureDatabases();
 export default defineConfig({
   server: {
     cert: await Deno.readTextFile("certs/cert.pem"),

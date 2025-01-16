@@ -7,6 +7,7 @@ import {
 } from "@melvdouc/xml-parser";
 import { createJwt } from "@popov/jwt";
 import { setCookie } from "$std/http/cookie.ts";
+import { getKey } from "$root/routes/_middleware.ts";
 
 const SERVICE = "https://localhost/login";
 const CAS = "https://ident.univ-amu.fr/cas";
@@ -21,6 +22,14 @@ interface CasGroupNode extends RegularTagNode {
 
 interface CasResponse extends RegularTagNode {
   children: [TextNode, CasGroupNode];
+}
+
+export interface LoginJWT {
+  iss: "PolyMPR";
+  iat: number;
+  exp: number;
+  aud: "PolyMPR";
+  user: Record<string, string | string[]>;
 }
 
 function getTag(tag: CasTagNode): [string, string] {
@@ -55,7 +64,7 @@ function createUserJWT(casResponse: CasResponse): Promise<string> {
     user: fullUserInfos,
   };
 
-  const key = "NEED TO CHANGE THIS KEY FURTHER IN DEV";
+  const key = getKey(fullUserInfos.uid as string);
   return createJwt(payload, key);
 }
 
