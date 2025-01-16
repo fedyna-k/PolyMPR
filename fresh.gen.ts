@@ -4,7 +4,10 @@
 
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
 import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
+import * as $_apps_mobility_partials_admin_mobility from "./routes/(apps)/mobility/partials/(admin)/mobility.tsx";
+import * as $_apps_mobility_partials_admin_students from "./routes/(apps)/mobility/partials/(admin)/students.tsx";
 import * as $_apps_mobility_partials_index from "./routes/(apps)/mobility/partials/index.tsx";
+import * as $_apps_mobility_partials_overview from "./routes/(apps)/mobility/partials/overview.tsx";
 import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
 import * as $_apps_notes_partials_admin_courses from "./routes/(apps)/notes/partials/(admin)/courses.tsx";
 import * as $_apps_notes_partials_admin_students from "./routes/(apps)/notes/partials/(admin)/students.tsx";
@@ -26,8 +29,14 @@ const manifest = {
   routes: {
     "./routes/(apps)/_layout.tsx": $_apps_layout,
     "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
+    "./routes/(apps)/mobility/partials/(admin)/mobility.tsx":
+      $_apps_mobility_partials_admin_mobility,
+    "./routes/(apps)/mobility/partials/(admin)/students.tsx":
+      $_apps_mobility_partials_admin_students,
     "./routes/(apps)/mobility/partials/index.tsx":
       $_apps_mobility_partials_index,
+    "./routes/(apps)/mobility/partials/overview.tsx":
+      $_apps_mobility_partials_overview,
     "./routes/(apps)/notes/index.tsx": $_apps_notes_index,
     "./routes/(apps)/notes/partials/(admin)/courses.tsx":
       $_apps_notes_partials_admin_courses,
