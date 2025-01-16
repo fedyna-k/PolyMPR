@@ -19,7 +19,9 @@
   --light-strong-color: hsl(210, 70%, 50%);
   --light-error-color: hsl(210, 70%, 50%);
 
-  --font-family-text: "Inter", sans-serif;
+  --font-family-text: "Recursive", sans-serif;
+  --font-weight-normal: 500;
+  --font-weight-bold: 900;
 }
 
 * {
@@ -41,7 +43,11 @@ body {
     var(--dark-background-color)
   );
   color: light-dark(var(--light-foreground), var(--dark-foreground));
-  font-weight: 300;
+  font-weight: var(--font-weight-normal);
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: var(--font-weight-bold);
 }
 
 header {
@@ -55,7 +61,7 @@ header {
       var(--dark-foreground-dimmer)
     );
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 header > h1 {

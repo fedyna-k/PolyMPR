@@ -6,6 +6,10 @@
   gap: 1em;
 }
 
+#app > #app-body {
+  padding: 0;
+}
+
 #app > nav {
   display: flex;
   flex-direction: column;
@@ -41,7 +45,7 @@
     ) 10%,
     transparent
   );
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 #app > nav > a[data-current="true"]::before {
