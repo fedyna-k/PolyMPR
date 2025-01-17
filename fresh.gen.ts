@@ -5,9 +5,9 @@
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
 import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_mobility_partials_admin_mobility from "./routes/(apps)/mobility/partials/(admin)/mobility.tsx";
-import * as $_apps_mobility_partials_admin_students from "./routes/(apps)/mobility/partials/(admin)/students.tsx";
 import * as $_apps_mobility_partials_index from "./routes/(apps)/mobility/partials/index.tsx";
 import * as $_apps_mobility_partials_overview from "./routes/(apps)/mobility/partials/overview.tsx";
+import * as $_apps_mobility_partials_students from "./routes/(apps)/mobility/partials/students.tsx";
 import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
 import * as $_apps_notes_partials_admin_courses from "./routes/(apps)/notes/partials/(admin)/courses.tsx";
 import * as $_apps_notes_partials_admin_students from "./routes/(apps)/notes/partials/(admin)/students.tsx";
@@ -23,6 +23,8 @@ import * as $login from "./routes/login.tsx";
 import * as $logout from "./routes/logout.tsx";
 import * as $_islands_AppNavigator from "./routes/(_islands)/AppNavigator.tsx";
 import * as $_islands_Navbar from "./routes/(_islands)/Navbar.tsx";
+import * as $_apps_mobility_islands_SaveStudents from "./routes/(apps)/mobility/(_islands)/SaveStudents.tsx";
+import * as $_apps_mobility_islands_UploadStudents from "./routes/(apps)/mobility/(_islands)/UploadStudents.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -31,12 +33,12 @@ const manifest = {
     "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
     "./routes/(apps)/mobility/partials/(admin)/mobility.tsx":
       $_apps_mobility_partials_admin_mobility,
-    "./routes/(apps)/mobility/partials/(admin)/students.tsx":
-      $_apps_mobility_partials_admin_students,
     "./routes/(apps)/mobility/partials/index.tsx":
       $_apps_mobility_partials_index,
     "./routes/(apps)/mobility/partials/overview.tsx":
       $_apps_mobility_partials_overview,
+    "./routes/(apps)/mobility/partials/students.tsx":
+      $_apps_mobility_partials_students,
     "./routes/(apps)/notes/index.tsx": $_apps_notes_index,
     "./routes/(apps)/notes/partials/(admin)/courses.tsx":
       $_apps_notes_partials_admin_courses,
@@ -56,6 +58,10 @@ const manifest = {
   islands: {
     "./routes/(_islands)/AppNavigator.tsx": $_islands_AppNavigator,
     "./routes/(_islands)/Navbar.tsx": $_islands_Navbar,
+    "./routes/(apps)/mobility/(_islands)/SaveStudents.tsx":
+      $_apps_mobility_islands_SaveStudents,
+    "./routes/(apps)/mobility/(_islands)/UploadStudents.tsx":
+      $_apps_mobility_islands_UploadStudents,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
