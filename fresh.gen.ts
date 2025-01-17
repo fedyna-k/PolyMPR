@@ -23,7 +23,7 @@ import * as $login from "./routes/login.tsx";
 import * as $logout from "./routes/logout.tsx";
 import * as $_islands_AppNavigator from "./routes/(_islands)/AppNavigator.tsx";
 import * as $_islands_Navbar from "./routes/(_islands)/Navbar.tsx";
-import * as $_apps_mobility_islands_SaveStudents from "./routes/(apps)/mobility/(_islands)/SaveStudents.tsx";
+import * as $_apps_mobility_islands_ConsultStudents from "./routes/(apps)/mobility/(_islands)/ConsultStudents.tsx";
 import * as $_apps_mobility_islands_UploadStudents from "./routes/(apps)/mobility/(_islands)/UploadStudents.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -58,8 +58,8 @@ const manifest = {
   islands: {
     "./routes/(_islands)/AppNavigator.tsx": $_islands_AppNavigator,
     "./routes/(_islands)/Navbar.tsx": $_islands_Navbar,
-    "./routes/(apps)/mobility/(_islands)/SaveStudents.tsx":
-      $_apps_mobility_islands_SaveStudents,
+    "./routes/(apps)/mobility/(_islands)/ConsultStudents.tsx":
+      $_apps_mobility_islands_ConsultStudents,
     "./routes/(apps)/mobility/(_islands)/UploadStudents.tsx":
       $_apps_mobility_islands_UploadStudents,
   },

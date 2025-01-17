@@ -1,123 +1,74 @@
 // @deno-types="https://cdn.sheetjs.com/xlsx-0.20.3/package/types/index.d.ts"
 import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
 import { useSignal } from "@preact/signals";
-import Papa from "https://cdn.skypack.dev/papaparse"; // Bibliothèque pour manipuler CSVs
-
-type Student = {
-  firstName: string;
-  lastName: string;
-  email: string;
-};
-
-type Promotion = {
-  name: string;
-  students: Student[];
-};
+import insertIntoMobility from "../../../../databases/mobility.ts";
 
 export default function UploadStudents() {
-  const promotions = useSignal<Promotion[]>([]);
-  const tempPromotions = useSignal<Promotion[]>([]);
   const statusMessage = useSignal<string>("");
+  const fileData = useSignal<File | null>(null);
 
-  const handleFileUpload = async (event: Event) => {
+  const handleFileChange = (event: Event) => {
     const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) {
+    if (input.files && input.files.length > 0) {
+      fileData.value = input.files[0];
+      statusMessage.value = "File selected: " + input.files[0].name;
+    } else {
+      fileData.value = null;
       statusMessage.value = "No file selected";
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!fileData.value) {
+      statusMessage.value = "Please select a file before confirming upload.";
       return;
     }
 
-    const file = input.files[0];
-    const reader = new FileReader();
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-    reader.onload = async (e) => {
-      try {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
+          for (const sheetName of workbook.SheetNames) {
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet, {
+              header: ["firstName", "lastName", "email"],
+              range: 1, // Ignorer les en-têtes
+            });
 
-        // Lire le classeur Excel
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+            console.log(`Data from sheet ${sheetName}:`, data);
 
-        const newPromotions: Promotion[] = [];
-        workbook.SheetNames.forEach((sheetName) => {
-          const worksheet = workbook.Sheets[sheetName];
-          const students: Student[] = XLSX.utils.sheet_to_json(worksheet, {
-            header: ["firstName", "lastName", "email"],
-            range: 1, // Skip header row
-          });
+            // Insérer les données dans la base de données
+            await insertIntoMobility(data as Array<{ firstName: string; lastName: string; email: string }>, sheetName);
+          }
 
-          newPromotions.push({ name: sheetName, students });
-        });
+          statusMessage.value = "File uploaded and data inserted successfully!";
+        } catch (error) {
+          console.error("Error reading or inserting file:", error);
+          statusMessage.value = "Error processing the file. Please check its format.";
+        }
+      };
 
-        tempPromotions.value = newPromotions; // Charger temporairement les promotions
-        statusMessage.value = "File loaded. Please confirm to save.";
-      } catch (error) {
-        statusMessage.value = "Error processing file";
-        console.error(error);
-      }
-    };
+      reader.onerror = (e) => {
+        console.error("FileReader error:", e);
+        statusMessage.value = "Error reading the file.";
+      };
 
-    reader.readAsArrayBuffer(file);
-  };
-
-  const confirmFileUpload = () => {
-    if (tempPromotions.value.length > 0) {
-      promotions.value = tempPromotions.value; // Mettre à jour les promotions
-      tempPromotions.value = []; // Réinitialiser le tampon temporaire
-      statusMessage.value = "Promotions updated successfully!";
-      savePromotionsToCSV(promotions.value); // Enregistrer dans un fichier CSV
-    } else {
-      statusMessage.value = "No data to confirm.";
+      reader.readAsArrayBuffer(fileData.value);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      statusMessage.value = "An unexpected error occurred during upload.";
     }
-  };
-
-  const savePromotionsToCSV = (data: Promotion[]) => {
-    const csvData = data.map((promotion) => {
-      return promotion.students.map((student) => ({
-        promotion: promotion.name,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        email: student.email,
-      }));
-    });
-
-    const flatData = csvData.flat();
-    const csv = Papa.unparse(flatData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    // Télécharger le fichier
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "students.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   return (
     <div>
-      <h1>Upload Promotions</h1>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      <button onClick={confirmFileUpload}>Confirm Upload</button>
+      <h2>Upload Students</h2>
+      <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+      <button onClick={handleUpload}>Confirm Upload</button>
       <p>{statusMessage.value}</p>
-
-      <div>
-        <h2>Available Promotions</h2>
-        <ul>
-          {promotions.value.map((promotion) => (
-            <li key={promotion.name}>
-              <strong>{promotion.name}</strong>
-              <ul>
-                {promotion.students.map((student, index) => (
-                  <li key={index}>
-                    {student.firstName} {student.lastName} - {student.email}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }
