@@ -10,7 +10,7 @@ const properties: AppProperties = {
     mobility: "Mobility management",
     students: "Students management",
   },
-  adminOnly: [],
+  adminOnly: ["students"],
 };
 
 export default properties;
