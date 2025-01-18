@@ -39,8 +39,6 @@ export default function UploadStudents() {
             });
 
             console.log(`Data from sheet ${sheetName}:`, data);
-
-            // Insérer les données dans la base de données
             await insertIntoMobility(data as Array<{ firstName: string; lastName: string; email: string }>, sheetName);
           }
 
