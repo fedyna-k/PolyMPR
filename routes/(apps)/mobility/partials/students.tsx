@@ -1,3 +1,4 @@
+
 import { RouteConfig } from "$fresh/server.ts";
 import UploadStudents from "../(_islands)/UploadStudents.tsx";
 //import ConsultStudents from "../(_islands)/ConsultStudents.tsx";
@@ -6,6 +7,7 @@ import UploadStudents from "../(_islands)/UploadStudents.tsx";
 export const config: RouteConfig = {
   skipAppWrapper: false, 
   skipInheritedLayouts: false, 
+
 };
 
 export default function Students() {
