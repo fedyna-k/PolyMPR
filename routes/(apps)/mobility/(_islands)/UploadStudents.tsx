@@ -18,7 +18,7 @@ export default function UploadStudents() {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = () => {
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
       return;
@@ -39,13 +39,19 @@ export default function UploadStudents() {
             });
 
             console.log(`Data from sheet ${sheetName}:`, data);
-            await insertIntoMobility(data as Array<{ firstName: string; lastName: string; email: string }>, sheetName);
+            await insertIntoMobility(
+              data as Array<
+                { firstName: string; lastName: string; email: string }
+              >,
+              sheetName,
+            );
           }
 
           statusMessage.value = "File uploaded and data inserted successfully!";
         } catch (error) {
           console.error("Error reading or inserting file:", error);
-          statusMessage.value = "Error processing the file. Please check its format.";
+          statusMessage.value =
+            "Error processing the file. Please check its format.";
         }
       };
 
