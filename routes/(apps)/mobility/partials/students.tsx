@@ -1,5 +1,5 @@
 import { RouteConfig } from "$fresh/server.ts";
-import UploadStudents from "../(_islands)/UploadStudents.tsx";
+import UploadStudents from "../(_components)/UploadStudents.tsx";
 //import ConsultStudents from "../(_islands)/ConsultStudents.tsx";
 //import EditStudents from "../(_islands)/EditStudents.tsx";
 
