@@ -1,69 +1,80 @@
-// @deno-types="https://cdn.sheetjs.com/xlsx-0.20.3/package/types/index.d.ts"
-import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
+import { Handlers } from "$fresh/server.ts";
 import { Database } from "@db/sqlite";
 
-export default function handleUpload(file: File | null): string {
-  if (!file) {
-    return "Please select a file before confirming upload.";
-  }
+export const handler: Handlers = {
+  async GET(_request, context) {
+    try {
+      // Ouvre ou crée la base de données SQLite
+      const db = new Database("databases/data/mobility.db");
 
-  try {
-    const reader = new FileReader();
-    let statusMessage = "";
+      // Crée la table si elle n'existe pas
+      db.execute(`
+        CREATE TABLE IF NOT EXISTS students (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          firstName TEXT NOT NULL,
+          lastName TEXT NOT NULL,
+          email TEXT NOT NULL,
+          promotion TEXT NOT NULL
+        );
+      `);
 
-    reader.onload = async (e) => {
-      try {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-
-        const db = new Database("databases/data/mobility.db");
-
-        db.execute(`
-          CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            firstName TEXT NOT NULL,
-            lastName TEXT NOT NULL,
-            email TEXT NOT NULL,
-            promotion TEXT NOT NULL
-          );
-        `);
-
-        for (const sheetName of workbook.SheetNames) {
-          const sheet = workbook.Sheets[sheetName];
-          const data = XLSX.utils.sheet_to_json(sheet, {
-            header: ["firstName", "lastName", "email"],
-            range: 1, // Ignorer les en-têtes
-          });
-
-          const insertQuery =
-            "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)";
-          for (const student of data) {
-            db.query(insertQuery, [
-              student.firstName,
-              student.lastName,
-              student.email,
-              sheetName,
-            ]);
-          }
-        }
-
-        db.close();
-        statusMessage = "Data uploaded and inserted successfully!";
-      } catch (error) {
-        console.error("Error reading or inserting file:", error);
-        statusMessage = "Error processing the file. Please check its format.";
+      // Récupère toutes les données
+      const students = [];
+      for (const [id, firstName, lastName, email, promotion] of db.query(
+        "SELECT id, firstName, lastName, email, promotion FROM students"
+      )) {
+        students.push({ id, firstName, lastName, email, promotion });
       }
-    };
 
-    reader.onerror = (e) => {
-      console.error("FileReader error:", e);
-      statusMessage = "Error reading the file.";
-    };
+      db.close();
 
-    reader.readAsArrayBuffer(file);
-    return statusMessage;
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    return "An unexpected error occurred during upload.";
-  }
-}
+      return new Response(JSON.stringify(students), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Error fetching students:", error);
+      return new Response("Failed to fetch students", { status: 500 });
+    }
+  },
+
+  async POST(request) {
+    try {
+      const body = await request.json();
+      const { data, promoName } = body;
+
+      // Ouvre ou crée la base de données SQLite
+      const db = new Database("databases/data/mobility.db");
+
+      // Crée la table si elle n'existe pas
+      db.execute(`
+        CREATE TABLE IF NOT EXISTS students (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          firstName TEXT NOT NULL,
+          lastName TEXT NOT NULL,
+          email TEXT NOT NULL,
+          promotion TEXT NOT NULL
+        );
+      `);
+
+      // Prépare et insère les données
+      const insertQuery =
+        "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)";
+      for (const student of data) {
+        db.query(insertQuery, [
+          student.firstName,
+          student.lastName,
+          student.email,
+          promoName,
+        ]);
+      }
+
+      db.close();
+
+      return new Response("Students inserted successfully", { status: 201 });
+    } catch (error) {
+      console.error("Error inserting students:", error);
+      return new Response("Failed to insert students", { status: 500 });
+    }
+  },
+};

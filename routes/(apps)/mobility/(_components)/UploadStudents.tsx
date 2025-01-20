@@ -1,7 +1,6 @@
 // @deno-types="https://cdn.sheetjs.com/xlsx-0.20.3/package/types/index.d.ts"
 import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
 import { useSignal } from "@preact/signals";
-import handleUpload from "../api/insert_students.ts";
 
 export default function UploadStudents() {
   const statusMessage = useSignal<string>("");
@@ -18,8 +17,55 @@ export default function UploadStudents() {
     }
   };
 
-  const confirmUpload = () => {
-    statusMessage.value = handleUpload(fileData.value);
+  const confirmUpload = async () => {
+    if (!fileData.value) {
+      statusMessage.value = "Please select a file before confirming upload.";
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        try {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+          for (const sheetName of workbook.SheetNames) {
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet, {
+              header: ["Nom", "Prénom", "Mail"],
+              range: 1, // Ignorer les en-têtes
+            });
+
+            const response = await fetch("/api/insert_students", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ promoName: sheetName, data }),
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to insert data for promotion ${sheetName}`);
+            }
+          }
+
+          statusMessage.value = "Data uploaded and inserted successfully!";
+        } catch (error) {
+          console.error("Error processing the file:", error);
+          statusMessage.value = "Error processing the file. Please check its format.";
+        }
+      };
+
+      reader.onerror = (e) => {
+        console.error("FileReader error:", e);
+        statusMessage.value = "Error reading the file.";
+      };
+
+      reader.readAsArrayBuffer(fileData.value);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      statusMessage.value = "An unexpected error occurred during upload.";
+    }
   };
 
   return (

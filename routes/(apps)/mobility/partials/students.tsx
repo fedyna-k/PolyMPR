@@ -1,7 +1,7 @@
 import { RouteConfig } from "$fresh/server.ts";
 import UploadStudents from "../(_components)/UploadStudents.tsx";
-//import ConsultStudents from "../(_islands)/ConsultStudents.tsx";
-//import EditStudents from "../(_islands)/EditStudents.tsx";
+//import ConsultStudents from "../(_components)/ConsultStudents.tsx";
+//import EditStudents from "../(_components)/EditStudents.tsx";
 
 export const config: RouteConfig = {
   skipAppWrapper: false,
