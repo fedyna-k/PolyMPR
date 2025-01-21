@@ -6,8 +6,6 @@ export default function UploadStudents() {
   const statusMessage = useSignal<string>("");
   const fileData = useSignal<File | null>(null);
 
-  console.log("Component UploadStudents mounted");
-
   const handleFileChange = (event: Event) => {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -17,12 +15,11 @@ export default function UploadStudents() {
     } else {
       fileData.value = null;
       statusMessage.value = "No file selected";
-      console.log("No file selected.");
     }
   };
 
   const confirmUpload = async () => {
-    console.log("Confirm Upload clicked");
+    console.log("Confirm Upload");
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
       console.error("Error: No file selected.");
@@ -45,8 +42,8 @@ export default function UploadStudents() {
             });
 
             console.log(`Data from sheet ${sheetName}:`, data);
-
-            const response = await fetch("/api/insert_students", {
+            
+            const response = await fetch("/mobility/api/insert_students", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ promoName: sheetName, data }),
