@@ -21,7 +21,7 @@ export default function ConsultStudents() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/mobility/api/insert_students");
+        const response = await fetch("/students/api/insert_students");
         if (!response.ok) {
           throw new Error(`Error fetching data: ${response.statusText}`);
         }

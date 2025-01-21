@@ -37,7 +37,7 @@ export default function UploadStudents() {
             range: 1, // Ignorer les en-têtes
           });
 
-          const response = await fetch("/mobility/api/insert_students", {
+          const response = await fetch("/students/api/insert_students", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ promoName: sheetName, data }),
