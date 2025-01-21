@@ -1,4 +1,9 @@
 export async function createModule(name: string): Promise<void> {
+  if (!name.match(/^[a-zA-Z0-9](?:(?:\-(?!\-))?[a-zA-Z0-9]*)*[a-zA-Z0-9]$/)) {
+    console.error("Module names must be in kebab case.");
+    Deno.exit(1);
+  }
+
   console.log(`Checking for module ${name}...`);
 
   try {
@@ -12,9 +17,10 @@ export async function createModule(name: string): Promise<void> {
     Deno.exit(1);
   }
 
-  const capitalizedName = `${name[0].toUpperCase()}${
-    name.substring(1).toLowerCase()
-  }`;
+  const capitalizedName = name.match(/(^\w)|(\-\w)/g)!.reduce(
+    (word, pattern) => word.replace(pattern, pattern.at(-1)!.toUpperCase()),
+    name,
+  );
 
   Promise.allSettled([
     createDir(`routes/(apps)/${name}/(_props)`),
@@ -106,20 +112,29 @@ function getPropsContent(name: string) {
   `;
 }
 
-function getApiExampleContent(name: string) {
+function getApiExampleContent(_name: string) {
   return `
-    import { AppProperties } from "$root/defaults/interfaces.ts";
+    import { Handlers } from "$fresh/server.ts";
     
-    const properties: AppProperties = {
-      name: "${name}",
-      icon: "school",
-      pages: {
-        index: "Homepage",
+    export const handler: Handlers = {
+      async POST(request, context) {
+        if (request.headers.get("content-type") != "application/json") {
+          return new Response(null, {
+            status: 400
+          });
+        }
+    
+        const responseBody = {
+          requestBody: await request.json(),
+          context,
+        };
+    
+        return new Response(JSON.stringify(responseBody), {
+          headers: {
+            "content-type": "application/json",
+          },
+        });
       },
-      adminOnly: [],
-      hint: "PolyMPR module",
     };
-    
-    export default properties;
   `;
 }
