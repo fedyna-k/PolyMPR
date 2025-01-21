@@ -7,7 +7,6 @@ const properties: AppProperties = {
     index: "Homepage",
     notes: "Notes",
     courses: "Courses management",
-    students: "Students management",
   },
   adminOnly: ["courses", "students"],
   hint: "Student grading management",

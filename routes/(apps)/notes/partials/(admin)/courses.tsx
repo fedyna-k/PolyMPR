@@ -1,17 +1,14 @@
-import { Partial } from "$fresh/runtime.ts";
-import { RouteConfig } from "$fresh/server.ts";
+import {
+  getPartialsConfig,
+  makePartials,
+} from "$root/defaults/makePartials.tsx";
+import { FreshContext } from "$fresh/server.ts";
+import { State } from "$root/routes/_middleware.ts";
 
-type ModulesProps = Record<string | number | symbol, never>;
-
-export const config: RouteConfig = {
-  skipAppWrapper: true,
-  skipInheritedLayouts: true,
-};
-
-export default function Modules(_props: ModulesProps) {
-  return (
-    <Partial name="body">
-      <a href="notes" f-partial={"notes/partials"}>notes</a>
-    </Partial>
-  );
+// deno-lint-ignore require-await
+async function Courses(_request: Request, context: FreshContext<State>) {
+  return <h2>Welcome to {context.state.session?.displayName}.</h2>;
 }
+
+export const config = getPartialsConfig();
+export default makePartials(Courses);

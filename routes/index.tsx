@@ -4,7 +4,10 @@ import { FreshContext } from "$fresh/server.ts";
 export default async function Home(_request: Request, _context: FreshContext) {
   return (
     <>
-      <h2>Welcome to PolyMPR!</h2>
+      <h2>PolyMPR</h2>
+      <h3>
+        The <em>ultimate</em> HR platform
+      </h3>
     </>
   );
 }
