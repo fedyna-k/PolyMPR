@@ -21,7 +21,6 @@ export default function ConsultStudents() {
   useEffect(() => {
     const fetchPromotionsAndStudents = async () => {
       try {
-        // Récupérer toutes les promotions
         const promoResponse = await fetch("/mobility/api/promotions");
         if (!promoResponse.ok) {
           throw new Error(`Error fetching promotions: ${promoResponse.statusText}`);
@@ -29,14 +28,12 @@ export default function ConsultStudents() {
         const promos: Promotion[] = await promoResponse.json();
         setPromotions(promos);
 
-        // Récupérer les étudiants
         const studentsResponse = await fetch("/mobility/api/insert_students");
         if (!studentsResponse.ok) {
           throw new Error(`Error fetching students: ${studentsResponse.statusText}`);
         }
         const students: Student[] = await studentsResponse.json();
 
-        // Grouper les étudiants par promotionId
         const grouped: Record<number, Student[]> = {};
         for (const student of students) {
           if (!grouped[student.promotionId]) {
