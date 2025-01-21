@@ -1,6 +1,7 @@
 import { JSX } from "preact";
 import { Partial } from "$fresh/runtime.ts";
-import { RouteConfig } from "$fresh/server.ts";
+import { FreshContext, RouteConfig } from "$fresh/server.ts";
+import { State } from "$root/routes/_middleware.ts";
 
 export function getPartialsConfig(): RouteConfig {
   return {
@@ -9,14 +10,19 @@ export function getPartialsConfig(): RouteConfig {
   };
 }
 
-// deno-lint-ignore no-explicit-any
-export function makePartials<Props extends any>(
-  page: (props: Props) => JSX.Element,
+export function makePartials(
+  page: (
+    request: Request,
+    context: FreshContext<State>,
+  ) => Promise<JSX.Element>,
 ) {
-  return function WrappedElements(props: Props): JSX.Element {
+  return async function WrappedElements(
+    request: Request,
+    context: FreshContext<State>,
+  ): Promise<JSX.Element> {
     return (
       <Partial name="body">
-        {page(props)}
+        {await page(request, context)}
       </Partial>
     );
   };

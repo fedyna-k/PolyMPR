@@ -1,36 +1,18 @@
 import { Handlers } from "$fresh/server.ts";
 import { State } from "$root/routes/_middleware.ts";
+import { parse, type RegularTagNode } from "@melvdouc/xml-parser";
 import {
-  parse,
-  type RegularTagNode,
-  type TextNode,
-} from "@melvdouc/xml-parser";
+  CasContent,
+  CasResponse,
+  CasTagNode,
+  LoginJWT,
+} from "$root/defaults/interfaces.ts";
 import { createJwt } from "@popov/jwt";
 import { setCookie } from "$std/http/cookie.ts";
 import { getKey } from "$root/routes/_middleware.ts";
 
 const SERVICE = "https://localhost/login";
 const CAS = "https://ident.univ-amu.fr/cas";
-
-interface CasTagNode extends RegularTagNode {
-  children: [TextNode];
-}
-
-interface CasGroupNode extends RegularTagNode {
-  children: CasTagNode[];
-}
-
-interface CasResponse extends RegularTagNode {
-  children: [TextNode, CasGroupNode];
-}
-
-export interface LoginJWT {
-  iss: "PolyMPR";
-  iat: number;
-  exp: number;
-  aud: "PolyMPR";
-  user: Record<string, string | string[]>;
-}
 
 function getTag(tag: CasTagNode): [string, string] {
   return [
@@ -43,11 +25,13 @@ function createUserJWT(casResponse: CasResponse): Promise<string> {
   const nodes = casResponse.children[1].children.map(getTag);
   const fullUserInfos: Record<string, string | string[]> = {};
 
-  nodes.forEach(([key, value]) => {
-    if (fullUserInfos[key] && Array.isArray(fullUserInfos[key])) {
+  nodes.forEach(([key, value]: [string, string]) => {
+    if (typeof fullUserInfos[key] == "string") {
+      fullUserInfos[key] = [fullUserInfos[key]];
+    }
+
+    if (Array.isArray(fullUserInfos[key])) {
       fullUserInfos[key].push(value);
-    } else if (fullUserInfos[key]) {
-      fullUserInfos[key] = [fullUserInfos[key], value];
     } else {
       fullUserInfos[key] = value;
     }
@@ -56,12 +40,12 @@ function createUserJWT(casResponse: CasResponse): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const oneHour = 60 * 60;
 
-  const payload = {
+  const payload: LoginJWT = {
     iss: "PolyMPR",
     iat: now,
     exp: now + oneHour,
     aud: "PolyMPR",
-    user: fullUserInfos,
+    user: fullUserInfos as unknown as CasContent,
   };
 
   const key = getKey(fullUserInfos.uid as string);

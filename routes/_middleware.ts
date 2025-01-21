@@ -1,7 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { getCookies } from "$std/http/cookie.ts";
 import { getJwtPayload, isJwtValid } from "@popov/jwt";
-import { LoginJWT } from "$root/routes/login.tsx";
+import { CasContent, LoginJWT } from "$root/defaults/interfaces.ts";
 
 const PUBLIC_ROUTES = [
   "/",
@@ -16,6 +16,7 @@ const jwtKeyCache: Record<string, string> = {};
 
 export interface State {
   isAuthenticated: boolean;
+  session: CasContent;
 }
 
 function isRoutePublic(route: string) {
@@ -44,12 +45,16 @@ export const handler = [
     }
 
     const content = getJwtPayload(cookies["sessionToken"]) as LoginJWT;
-    const key = getKey(content.user.uid as string);
+    const key = getKey(content.user.uid);
 
     context.state.isAuthenticated = await isJwtValid(
       cookies["sessionToken"],
       key,
     );
+    const session: CasContent =
+      (getJwtPayload(cookies["sessionToken"]) as LoginJWT).user;
+
+    context.state.session = session;
 
     return await context.next();
   },
