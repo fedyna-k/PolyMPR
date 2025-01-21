@@ -1,14 +1,13 @@
 import { Handlers } from "$fresh/server.ts";
-import { Database } from "@db/sqlite";
+import { Database } from "@db/sqlite"; 
 
 export const handler: Handlers = {
   async GET(_request, context) {
     try {
-      // Ouvre ou crée la base de données SQLite
       const db = new Database("databases/data/mobility.db");
 
-      // Crée la table si elle n'existe pas
-      db.execute(`
+      db.prepare(
+        `
         CREATE TABLE IF NOT EXISTS students (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           firstName TEXT NOT NULL,
@@ -16,19 +15,16 @@ export const handler: Handlers = {
           email TEXT NOT NULL,
           promotion TEXT NOT NULL
         );
-      `);
+        `
+      ).run();
 
-      // Récupère toutes les données
-      const students = [];
-      for (const [id, firstName, lastName, email, promotion] of db.query(
+      const rows = db.prepare(
         "SELECT id, firstName, lastName, email, promotion FROM students"
-      )) {
-        students.push({ id, firstName, lastName, email, promotion });
-      }
+      ).all();
 
       db.close();
 
-      return new Response(JSON.stringify(students), {
+      return new Response(JSON.stringify(rows), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
@@ -39,15 +35,24 @@ export const handler: Handlers = {
   },
 
   async POST(request) {
+    console.log("API /mobility/api/insert_students called");
+
     try {
       const body = await request.json();
       const { data, promoName } = body;
 
-      // Ouvre ou crée la base de données SQLite
+      console.log("Received data:", { promoName, data });
+
+      if (!promoName || !Array.isArray(data)) {
+        throw new Error("Invalid request body");
+      }
+
       const db = new Database("databases/data/mobility.db");
 
-      // Crée la table si elle n'existe pas
-      db.execute(`
+      console.log("Database opened successfully");
+
+      db.prepare(
+        `
         CREATE TABLE IF NOT EXISTS students (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           firstName TEXT NOT NULL,
@@ -55,20 +60,21 @@ export const handler: Handlers = {
           email TEXT NOT NULL,
           promotion TEXT NOT NULL
         );
-      `);
+        `
+      ).run();
 
-      // Prépare et insère les données
-      const insertQuery =
-        "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)";
+      console.log("Table ensured successfully");
+
+      const insertQuery = db.prepare(
+        "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)"
+      );
+
       for (const student of data) {
-        db.query(insertQuery, [
-          student.firstName,
-          student.lastName,
-          student.email,
-          promoName,
-        ]);
+        console.log("Inserting student:", student);
+        insertQuery.run(student.Nom, student["Prénom"], student.Mail, promoName);
       }
 
+      console.log("All students inserted successfully");
       db.close();
 
       return new Response("Students inserted successfully", { status: 201 });

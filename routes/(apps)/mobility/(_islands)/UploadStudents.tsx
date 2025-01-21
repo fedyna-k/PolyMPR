@@ -11,6 +11,7 @@ export default function UploadStudents() {
     if (input.files && input.files.length > 0) {
       fileData.value = input.files[0];
       statusMessage.value = "File selected: " + input.files[0].name;
+      console.log("File selected:", input.files[0].name);
     } else {
       fileData.value = null;
       statusMessage.value = "No file selected";
@@ -18,8 +19,10 @@ export default function UploadStudents() {
   };
 
   const confirmUpload = async () => {
+    console.log("Confirm Upload");
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
+      console.error("Error: No file selected.");
       return;
     }
 
@@ -34,11 +37,13 @@ export default function UploadStudents() {
           for (const sheetName of workbook.SheetNames) {
             const sheet = workbook.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(sheet, {
-              header: ["Nom", "Prénom", "Mail"],
+              header: ["Nom", "Prénom", "Mail"], 
               range: 1, // Ignorer les en-têtes
             });
 
-            const response = await fetch("/api/insert_students", {
+            console.log(`Data from sheet ${sheetName}:`, data);
+            
+            const response = await fetch("/mobility/api/insert_students", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ promoName: sheetName, data }),

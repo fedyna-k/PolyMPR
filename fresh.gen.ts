@@ -27,6 +27,12 @@ import * as $login from "./routes/login.tsx";
 import * as $logout from "./routes/logout.tsx";
 import * as $_islands_AppNavigator from "./routes/(_islands)/AppNavigator.tsx";
 import * as $_islands_Navbar from "./routes/(_islands)/Navbar.tsx";
+import * as $_apps_mobility_islands_ConsultMobility from "./routes/(apps)/mobility/(_islands)/ConsultMobility.tsx";
+import * as $_apps_mobility_islands_ConsultStudents from "./routes/(apps)/mobility/(_islands)/ConsultStudents.tsx";
+import * as $_apps_mobility_islands_EditMobility from "./routes/(apps)/mobility/(_islands)/EditMobility.tsx";
+import * as $_apps_mobility_islands_EditStudents from "./routes/(apps)/mobility/(_islands)/EditStudents.tsx";
+import * as $_apps_mobility_islands_ImportFile from "./routes/(apps)/mobility/(_islands)/ImportFile.tsx";
+import * as $_apps_mobility_islands_UploadStudents from "./routes/(apps)/mobility/(_islands)/UploadStudents.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -66,6 +72,18 @@ const manifest = {
   islands: {
     "./routes/(_islands)/AppNavigator.tsx": $_islands_AppNavigator,
     "./routes/(_islands)/Navbar.tsx": $_islands_Navbar,
+    "./routes/(apps)/mobility/(_islands)/ConsultMobility.tsx":
+      $_apps_mobility_islands_ConsultMobility,
+    "./routes/(apps)/mobility/(_islands)/ConsultStudents.tsx":
+      $_apps_mobility_islands_ConsultStudents,
+    "./routes/(apps)/mobility/(_islands)/EditMobility.tsx":
+      $_apps_mobility_islands_EditMobility,
+    "./routes/(apps)/mobility/(_islands)/EditStudents.tsx":
+      $_apps_mobility_islands_EditStudents,
+    "./routes/(apps)/mobility/(_islands)/ImportFile.tsx":
+      $_apps_mobility_islands_ImportFile,
+    "./routes/(apps)/mobility/(_islands)/UploadStudents.tsx":
+      $_apps_mobility_islands_UploadStudents,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
