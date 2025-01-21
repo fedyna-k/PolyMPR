@@ -11,7 +11,6 @@ import { createJwt } from "@popov/jwt";
 import { setCookie } from "$std/http/cookie.ts";
 import { getKey } from "$root/routes/_middleware.ts";
 
-const SERVICE = "https://localhost/login";
 const CAS = "https://ident.univ-amu.fr/cas";
 
 function getTag(tag: CasTagNode): [string, string] {
@@ -57,10 +56,11 @@ export const handler: Handlers<any, State> = {
   async GET(request, context) {
     const url = new URL(request.url);
     const ticket = url.searchParams.get("ticket");
+    const service = `${context.url.origin}/login`;
 
     if (ticket) {
       const response = await fetch(
-        `${CAS}/serviceValidate?service=${SERVICE}&ticket=${ticket}`,
+        `${CAS}/serviceValidate?service=${service}&ticket=${ticket}`,
       );
       const body = parse(await response.text()) as [RegularTagNode];
       const casResponse = body[0].children[0] as CasResponse;
@@ -69,7 +69,7 @@ export const handler: Handlers<any, State> = {
         return new Response(null, {
           status: 302,
           headers: {
-            Location: `${CAS}/login?service=${SERVICE}`,
+            Location: `${CAS}/login?service=${service}`,
           },
         });
       }
@@ -99,7 +99,7 @@ export const handler: Handlers<any, State> = {
       return new Response(null, {
         status: 302,
         headers: {
-          Location: `${CAS}/login?service=${SERVICE}`,
+          Location: `${CAS}/login?service=${service}`,
         },
       });
     }
