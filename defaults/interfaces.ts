@@ -1,4 +1,10 @@
 import { type RegularTagNode, type TextNode } from "@melvdouc/xml-parser";
+import { AsyncRoute } from "$fresh/src/server/types.ts";
+
+export interface State {
+  isAuthenticated: boolean;
+  session: CasContent;
+}
 
 export interface AppProperties {
   name: string;
@@ -48,3 +54,6 @@ export interface LoginJWT {
 }
 
 export type EmptyObject = Record<string | number | symbol, never>;
+
+// deno-lint-ignore no-explicit-any
+export type Route = AsyncRoute<any, State>;

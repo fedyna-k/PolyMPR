@@ -1,7 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { getCookies } from "$std/http/cookie.ts";
 import { getJwtPayload, isJwtValid } from "@popov/jwt";
-import { CasContent, LoginJWT } from "$root/defaults/interfaces.ts";
+import { CasContent, LoginJWT, State } from "$root/defaults/interfaces.ts";
 
 const PUBLIC_ROUTES = [
   "/",
@@ -13,21 +13,29 @@ const PUBLIC_ROUTES = [
 ];
 
 const jwtKeyCache: Record<string, string> = {};
+const deleteKey = (user: string) => delete jwtKeyCache[user];
 
-export interface State {
-  isAuthenticated: boolean;
-  session: CasContent;
+/**
+ * Checks if the given route is public.
+ * @param route The route to check.
+ * @returns `true` if the route is public, `false` otherwise.
+ */
+function isRoutePublic(route: string): boolean {
+  return PUBLIC_ROUTES.includes(route) ||
+    !!(route.match(/\..+$/)?.[0] ?? false);
 }
 
-function isRoutePublic(route: string) {
-  return PUBLIC_ROUTES.includes(route) || route.match(/\..+$/);
-}
-
+/**
+ * Get the given user's key, creating it if not already existing.
+ * @param user The key's user.
+ * @returns The user's key.
+ */
 export function getKey(user: string): string {
   if (!jwtKeyCache[user]) {
     const keyBuffer = new Uint8Array(32);
     crypto.getRandomValues(keyBuffer);
     jwtKeyCache[user] = new TextDecoder().decode(keyBuffer);
+    setTimeout(deleteKey, 0x75300, user);
   }
 
   return jwtKeyCache[user];

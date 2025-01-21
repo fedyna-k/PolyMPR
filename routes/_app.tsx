@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { State } from "$root/routes/_middleware.ts";
+import { State } from "$root/defaults/interfaces.ts";
 import Header from "$root/routes/(_components)/Header.tsx";
 import Footer from "$root/routes/(_components)/Footer.tsx";
 

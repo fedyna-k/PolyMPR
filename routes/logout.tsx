@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { State } from "$root/routes/_middleware.ts";
+import { State } from "$root/defaults/interfaces.ts";
 import { deleteCookie } from "$std/http/cookie.ts";
 
 const CAS = "https://ident.univ-amu.fr/cas";
