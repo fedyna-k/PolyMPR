@@ -5,7 +5,9 @@ export default async function Home(_request: Request, _context: FreshContext) {
   return (
     <>
       <h2>PolyMPR</h2>
-      <h3>The <em>ultimate</em> HR platform</h3>
+      <h3>
+        The <em>ultimate</em> HR platform
+      </h3>
     </>
   );
 }
