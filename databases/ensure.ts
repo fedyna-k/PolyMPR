@@ -1,6 +1,8 @@
 import { Database } from "@db/sqlite";
 
 export default async function ensureDatabases() {
+  await Deno.mkdir("databases/data", { recursive: true });
+
   for await (const file of Deno.readDir("databases/init")) {
     if (!file.isFile) {
       console.warn(`[WARN] Path ${file.name} is not a file.`);
