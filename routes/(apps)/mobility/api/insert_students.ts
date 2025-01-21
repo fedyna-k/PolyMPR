@@ -2,9 +2,18 @@ import { Handlers } from "$fresh/server.ts";
 import { Database } from "@db/sqlite";
 
 export const handler: Handlers = {
-  async GET(_request, context) {
+  async GET() {
     try {
       const db = new Database("databases/data/mobility.db");
+
+      db.prepare(
+        `
+        CREATE TABLE IF NOT EXISTS promotions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT UNIQUE NOT NULL
+        );
+      `
+      ).run();
 
       db.prepare(
         `
@@ -16,24 +25,33 @@ export const handler: Handlers = {
           promotionId INTEGER NOT NULL,
           FOREIGN KEY (promotionId) REFERENCES promotions (id)
         );
-        `
+      `
       ).run();
 
-      const rows = db
+      const promotions = db.prepare("SELECT id, name FROM promotions").all();
+
+      const students = db
         .prepare(
-          "SELECT students.id, firstName, lastName, email, promotionId FROM students"
+          `
+          SELECT students.id, firstName, lastName, email, promotionId, promotions.name AS promotionName
+          FROM students
+          JOIN promotions ON students.promotionId = promotions.id
+        `
         )
         .all();
 
       db.close();
 
-      return new Response(JSON.stringify(rows), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ promotions, students }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     } catch (error) {
-      console.error("Error fetching students:", error);
-      return new Response("Failed to fetch students", { status: 500 });
+      console.error("Error fetching data:", error);
+      return new Response("Failed to fetch data", { status: 500 });
     }
   },
 
@@ -52,33 +70,6 @@ export const handler: Handlers = {
 
       const db = new Database("databases/data/mobility.db");
 
-      console.log("Database opened successfully");
-
-      db.prepare(
-        `
-        CREATE TABLE IF NOT EXISTS promotions (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT UNIQUE NOT NULL
-        );
-        `
-      ).run();
-
-      db.prepare(
-        `
-        CREATE TABLE IF NOT EXISTS students (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          firstName TEXT NOT NULL,
-          lastName TEXT NOT NULL,
-          email TEXT NOT NULL,
-          promotionId INTEGER NOT NULL,
-          FOREIGN KEY (promotionId) REFERENCES promotions (id)
-        );
-        `
-      ).run();
-
-      console.log("Tables ensured successfully");
-
-      // Insérer ou récupérer l'ID de la promotion
       db.prepare(
         "INSERT OR IGNORE INTO promotions (name) VALUES (?)"
       ).run(promoName);
@@ -99,13 +90,13 @@ export const handler: Handlers = {
         insertQuery.run(student.Nom, student["Prénom"], student.Mail, promoId);
       }
 
-      console.log("All students inserted successfully");
       db.close();
 
-      return new Response("Students inserted successfully", { status: 201 });
+      console.log("All data inserted successfully");
+      return new Response("Data inserted successfully", { status: 201 });
     } catch (error) {
-      console.error("Error inserting students:", error);
-      return new Response("Failed to insert students", { status: 500 });
+      console.error("Error inserting data:", error);
+      return new Response("Failed to insert data", { status: 500 });
     }
   },
 };
