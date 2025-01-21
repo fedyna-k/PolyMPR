@@ -18,7 +18,7 @@ export default function UploadStudents() {
     }
   };
 
-  const confirmUpload = async () => {
+  const confirmUpload = () => {
     console.log("Confirm Upload");
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
@@ -37,12 +37,12 @@ export default function UploadStudents() {
           for (const sheetName of workbook.SheetNames) {
             const sheet = workbook.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(sheet, {
-              header: ["Nom", "Prénom", "Mail"], 
+              header: ["Nom", "Prénom", "Mail"],
               range: 1, // Ignorer les en-têtes
             });
 
             console.log(`Data from sheet ${sheetName}:`, data);
-            
+
             const response = await fetch("/mobility/api/insert_students", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -50,14 +50,17 @@ export default function UploadStudents() {
             });
 
             if (!response.ok) {
-              throw new Error(`Failed to insert data for promotion ${sheetName}`);
+              throw new Error(
+                `Failed to insert data for promotion ${sheetName}`,
+              );
             }
           }
 
           statusMessage.value = "Data uploaded and inserted successfully!";
         } catch (error) {
           console.error("Error processing the file:", error);
-          statusMessage.value = "Error processing the file. Please check its format.";
+          statusMessage.value =
+            "Error processing the file. Please check its format.";
         }
       };
 

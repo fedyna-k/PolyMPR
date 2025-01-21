@@ -36,9 +36,7 @@ export default function ConsultStudents() {
     <section>
       <h2>Consult Students</h2>
       {error && <p className="error">{error}</p>}
-      {students.length === 0 ? (
-        <p>No students found.</p>
-      ) : (
+      {students.length === 0 ? <p>No students found.</p> : (
         <table>
           <thead>
             <tr>

@@ -1,8 +1,9 @@
 import { Handlers } from "$fresh/server.ts";
-import { Database } from "@db/sqlite"; 
+import { Database } from "@db/sqlite";
 
 export const handler: Handlers = {
-  async GET(_request, context) {
+  // deno-lint-ignore require-await
+  async GET(_request, _context) {
     try {
       const db = new Database("databases/data/mobility.db");
 
@@ -15,11 +16,11 @@ export const handler: Handlers = {
           email TEXT NOT NULL,
           promotion TEXT NOT NULL
         );
-        `
+        `,
       ).run();
 
       const rows = db.prepare(
-        "SELECT id, firstName, lastName, email, promotion FROM students"
+        "SELECT id, firstName, lastName, email, promotion FROM students",
       ).all();
 
       db.close();
@@ -60,18 +61,23 @@ export const handler: Handlers = {
           email TEXT NOT NULL,
           promotion TEXT NOT NULL
         );
-        `
+        `,
       ).run();
 
       console.log("Table ensured successfully");
 
       const insertQuery = db.prepare(
-        "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)"
+        "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)",
       );
 
       for (const student of data) {
         console.log("Inserting student:", student);
-        insertQuery.run(student.Nom, student["Prénom"], student.Mail, promoName);
+        insertQuery.run(
+          student.Nom,
+          student["Prénom"],
+          student.Mail,
+          promoName,
+        );
       }
 
       console.log("All students inserted successfully");
