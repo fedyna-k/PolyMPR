@@ -26,6 +26,7 @@
     "@db/sqlite": "jsr:@db/sqlite@^0.12.0",
     "@melvdouc/xml-parser": "jsr:@melvdouc/xml-parser@^0.1.1",
     "@popov/jwt": "jsr:@popov/jwt@^1.0.1",
+    "@psych/sheet": "jsr:@psych/sheet@^1.0.6",
     "@std/cli": "jsr:@std/cli@^1.0.10",
     "preact": "https://esm.sh/preact@10.22.0",
     "preact/": "https://esm.sh/preact@10.22.0/",

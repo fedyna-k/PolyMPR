@@ -77,15 +77,14 @@ function getIndexContent(_name: string) {
 
 function getPartialIndexContent(name: string) {
   return `
-    import { EmptyObject } from "$root/defaults/interfaces.ts";
     import {
       getPartialsConfig,
       makePartials,
     } from "$root/defaults/makePartials.tsx";
+    import { FreshContext } from "$fresh/server.ts";
+    import { State } from "$root/routes/_middleware.ts";
     
-    type ${name}IndexProps = EmptyObject;
-    
-    export function Index(_props: ${name}IndexProps) {
+    export async function Index(request: Request, context: FreshContext<State>) {
       return <h2>Welcome to ${name}.</h2>;
     }
     
