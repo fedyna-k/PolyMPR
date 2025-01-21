@@ -1,3 +1,9 @@
+create table promotions (
+  id      integer primary key autoincrement,
+  endyear integer,
+  current integer
+);
+
 create table students (
   userId    text  primary key,
   firstName text,
@@ -5,10 +11,4 @@ create table students (
   mail      text,
   promo     integer,
   foreign key(promo) references promo(id)
-);
-
-create table promo (
-  id      integer,
-  endyear integer,
-  current integer
 );

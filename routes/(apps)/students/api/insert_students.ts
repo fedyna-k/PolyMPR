@@ -1,53 +1,27 @@
 import { Handlers } from "$fresh/server.ts";
-import { Database } from "@db/sqlite";
+import connect from "$root/databases/connect.ts";
 
 export const handler: Handlers = {
   async GET() {
     try {
-      const db = new Database("databases/data/mobility.db");
+      using connection = connect("students");
 
-      db.prepare(
-        `
-        CREATE TABLE IF NOT EXISTS promotions (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT UNIQUE NOT NULL
-        );
-      `
-      ).run();
+      const promotions = connection.database.prepare(
+        "select id from promotions",
+      ).all();
 
-      db.prepare(
-        `
-        CREATE TABLE IF NOT EXISTS students (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          firstName TEXT NOT NULL,
-          lastName TEXT NOT NULL,
-          email TEXT NOT NULL,
-          promotionId INTEGER NOT NULL,
-          FOREIGN KEY (promotionId) REFERENCES promotions (id)
-        );
-      `
-      ).run();
-
-      const promotions = db.prepare("SELECT id, name FROM promotions").all();
-
-      const students = db
+      const students = connection.database
         .prepare(
-          `
-          SELECT students.id, firstName, lastName, email, promotionId, promotions.name AS promotionName
-          FROM students
-          JOIN promotions ON students.promotionId = promotions.id
-        `
+          `select userId, firstName, lastName, mail, promo from students`,
         )
         .all();
-
-      db.close();
 
       return new Response(
         JSON.stringify({ promotions, students }),
         {
           status: 200,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -68,29 +42,27 @@ export const handler: Handlers = {
         throw new Error("Invalid request body");
       }
 
-      const db = new Database("databases/data/mobility.db");
+      using connection = connect("students");
 
-      db.prepare(
-        "INSERT OR IGNORE INTO promotions (name) VALUES (?)"
+      connection.database.prepare(
+        "INSERT OR IGNORE INTO promotions (name) VALUES (?)",
       ).run(promoName);
 
-      const promoIdRow = db
+      const promoIdRow: {id: string} = connection.database
         .prepare("SELECT id FROM promotions WHERE name = ?")
-        .get(promoName);
+        .get(promoName)!;
       const promoId = promoIdRow.id;
 
       console.log(`Promotion ID for "${promoName}":`, promoId);
 
-      const insertQuery = db.prepare(
-        "INSERT INTO students (firstName, lastName, email, promotionId) VALUES (?, ?, ?, ?)"
+      const insertQuery = connection.database.prepare(
+        "INSERT INTO students (firstName, lastName, email, promotionId) VALUES (?, ?, ?, ?)",
       );
 
       for (const student of data) {
         console.log("Inserting student:", student);
         insertQuery.run(student.Nom, student["Prénom"], student.Mail, promoId);
       }
-
-      db.close();
 
       console.log("All data inserted successfully");
       return new Response("Data inserted successfully", { status: 201 });
