@@ -1,7 +1,7 @@
 import { RouteConfig } from "$fresh/server.ts";
 import UploadStudents from "../(_islands)/UploadStudents.tsx";
-//import ConsultStudents from "../(_components)/ConsultStudents.tsx";
-//import EditStudents from "../(_components)/EditStudents.tsx";
+import ConsultStudents from "../(_islands)/ConsultStudents.tsx";
+//import EditStudents from "../(_islands)/EditStudents.tsx";
 
 export const config: RouteConfig = {
   skipAppWrapper: false,
@@ -14,6 +14,7 @@ export default function Students() {
       <h1>Manage Promotions</h1>
       <UploadStudents />
       <hr />
+      <ConsultStudents />
     </section>
   );
 }
