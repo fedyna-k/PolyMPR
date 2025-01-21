@@ -4,10 +4,8 @@ import { Database } from "@db/sqlite";
 export const handler: Handlers = {
   async GET(_request, context) {
     try {
-      // Ouvre ou crée la base de données SQLite
       const db = new Database("databases/data/mobility.db");
 
-      // Crée la table si elle n'existe pas
       db.execute(`
         CREATE TABLE IF NOT EXISTS students (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,7 +16,6 @@ export const handler: Handlers = {
         );
       `);
 
-      // Récupère toutes les données
       const students = [];
       for (const [id, firstName, lastName, email, promotion] of db.query(
         "SELECT id, firstName, lastName, email, promotion FROM students"
@@ -43,10 +40,8 @@ export const handler: Handlers = {
       const body = await request.json();
       const { data, promoName } = body;
 
-      // Ouvre ou crée la base de données SQLite
       const db = new Database("databases/data/mobility.db");
 
-      // Crée la table si elle n'existe pas
       db.execute(`
         CREATE TABLE IF NOT EXISTS students (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,7 +52,6 @@ export const handler: Handlers = {
         );
       `);
 
-      // Prépare et insère les données
       const insertQuery =
         "INSERT INTO students (firstName, lastName, email, promotion) VALUES (?, ?, ?, ?)";
       for (const student of data) {

@@ -3,7 +3,7 @@ FROM denoland/deno:alpine
 WORKDIR /app
 
 COPY . .
-RUN deno cache main.ts
+RUN deno cache main.ts --allow-import flag
 RUN deno task build
 
 USER deno
