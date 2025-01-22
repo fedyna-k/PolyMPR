@@ -1,12 +1,12 @@
 import { Handlers } from "$fresh/server.ts";
-import connect from "$root/databases/connect.ts";
+import { Database } from "@db/sqlite";
 
 export const handler: Handlers = {
   async GET() {
     try {
-      using connection = connect("mobility");
+      const connection = new Database("databases/data/mobility.db", { create: false });
 
-      const mobilities = connection.database.prepare(
+      const mobilities = connection.prepare(
         `SELECT 
           mobility.id, 
           mobility.studentId, 
@@ -19,8 +19,10 @@ export const handler: Handlers = {
           mobility.destinationName, 
           mobility.mobilityStatus 
         FROM mobility
-        LEFT JOIN students ON mobility.studentId = students.userId`,
+        LEFT JOIN students ON mobility.studentId = students.userId`
       ).all();
+
+      connection.close();
 
       return new Response(
         JSON.stringify({ mobilities }),
@@ -36,7 +38,7 @@ export const handler: Handlers = {
   },
 
   async POST(request) {
-    console.log("API /mobility/api/update_mobility called");
+    console.log("API /mobility/api/insert_mobility called");
 
     try {
       const body = await request.json();
@@ -46,25 +48,17 @@ export const handler: Handlers = {
         throw new Error("Invalid request body");
       }
 
-      using connection = connect("mobility");
+      const connection = new Database("databases/data/mobility.db", { create: false });
 
-      const updateQuery = connection.database.prepare(
+      const insertQuery = connection.prepare(
         `INSERT INTO mobility (
-          id, studentId, startDate, endDate, weeksCount, destinationCountry, destinationName, mobilityStatus
+          studentId, startDate, endDate, weeksCount, destinationCountry, destinationName, mobilityStatus
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(id) DO UPDATE SET
-          startDate = excluded.startDate,
-          endDate = excluded.endDate,
-          weeksCount = excluded.weeksCount,
-          destinationCountry = excluded.destinationCountry,
-          destinationName = excluded.destinationName,
-          mobilityStatus = excluded.mobilityStatus`
+        VALUES (?, ?, ?, ?, ?, ?, ?)`
       );
 
       for (const mobility of data) {
         const {
-          id,
           studentId,
           startDate,
           endDate,
@@ -74,8 +68,7 @@ export const handler: Handlers = {
           mobilityStatus = "N/A",
         } = mobility;
 
-        updateQuery.run(
-          id,
+        insertQuery.run(
           studentId,
           startDate,
           endDate,
@@ -86,11 +79,13 @@ export const handler: Handlers = {
         );
       }
 
-      console.log("Mobility data updated successfully");
-      return new Response("Data updated successfully", { status: 200 });
+      connection.close();
+
+      console.log("Mobility data inserted successfully");
+      return new Response("Data inserted successfully", { status: 201 });
     } catch (error) {
-      console.error("Error updating mobility data:", error);
-      return new Response("Failed to update data", { status: 500 });
+      console.error("Error inserting mobility data:", error);
+      return new Response("Failed to insert data", { status: 500 });
     }
   },
 };
