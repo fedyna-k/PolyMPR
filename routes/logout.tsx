@@ -1,12 +1,17 @@
-import { Handlers } from "$fresh/server.ts";
+import { FreshContext, Handlers } from "$fresh/server.ts";
 import { State } from "$root/defaults/interfaces.ts";
 import { deleteCookie } from "$std/http/cookie.ts";
 
 const CAS = "https://ident.univ-amu.fr/cas";
 
-// deno-lint-ignore no-explicit-any
-export const handler: Handlers<any, State> = {
-  GET(_request, context) {
+export const handler: Handlers<null, State> = {
+  /**
+   * Logout of amU CAS SSO system.
+   * @param _request The HTTP incomming request.
+   * @param context The Fresh context with `State`.
+   * @returns A redirect response to either CAS logout or home.
+   */
+  GET(_request: Request, context: FreshContext<State, null>): Response {
     if (context.state.isAuthenticated) {
       const headers = new Headers();
 
