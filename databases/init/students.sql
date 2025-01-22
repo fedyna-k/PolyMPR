@@ -1,6 +1,6 @@
 create table promotions (
   id      integer primary key autoincrement,
-  name text,
+  name    text,
   endyear integer,
   current integer
 );
