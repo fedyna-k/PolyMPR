@@ -12,7 +12,7 @@ export const handler: Handlers = {
 
       const students = connection.database
         .prepare(
-          `select userId, firstName, lastName, mail, promo from students`,
+          `select userId, firstName, lastName, mail, promotionId from students`,
         )
         .all();
 
@@ -56,7 +56,7 @@ export const handler: Handlers = {
       console.log(`Promotion ID for "${promoName}":`, promoId);
 
       const insertQuery = connection.database.prepare(
-        "INSERT INTO students (firstName, lastName, email, promotionId) VALUES (?, ?, ?, ?)",
+        "INSERT INTO students (firstName, lastName, mail, promotionId) VALUES (?, ?, ?, ?)",
       );
 
       for (const student of data) {

@@ -9,7 +9,7 @@ interface Student {
   id: number;
   firstName: string;
   lastName: string;
-  email: string;
+  mail: string;
   promotionId: number;
   promotionName: string;
 }
@@ -43,7 +43,7 @@ export default function ConsultStudents() {
       {error && <p className="error">{error}</p>}
       {data?.promotions.map((promo) => (
         <div key={promo.id}>
-          <h3>Promotion: {promo.name}</h3>
+          <h3>Promotion: {promo.id}</h3> 
           <table>
             <thead>
               <tr>
@@ -61,7 +61,7 @@ export default function ConsultStudents() {
                     <td>{student.id}</td>
                     <td>{student.firstName}</td>
                     <td>{student.lastName}</td>
-                    <td>{student.email}</td>
+                    <td>{student.mail}</td>
                   </tr>
                 ))}
             </tbody>
