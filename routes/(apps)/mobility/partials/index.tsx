@@ -2,12 +2,12 @@ import {
   getPartialsConfig,
   makePartials,
 } from "$root/defaults/makePartials.tsx";
-import { EmptyObject } from "$root/defaults/interfaces.ts";
+import { FreshContext } from "$fresh/server.ts";
+import { State } from "$root/routes/_middleware.ts";
 
-type MobilityIndexProps = EmptyObject;
-
-export function Index(_props: MobilityIndexProps) {
-  return <p>Nothing to see here...</p>;
+// deno-lint-ignore require-await
+export async function Index(_request: Request, context: FreshContext<State>) {
+  return <h2>Welcome to {context.state.session?.displayName}.</h2>;
 }
 
 export const config = getPartialsConfig();
