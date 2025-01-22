@@ -1,3 +1,6 @@
+/**
+ * List all modules of PolyMPR.
+ */
 export async function listModules(): Promise<void> {
   for await (const path of Deno.readDir("routes/(apps)")) {
     if (path.isDirectory) {

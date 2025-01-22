@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { Partial } from "$fresh/runtime.ts";
-import { State } from "$root/routes/_middleware.ts";
+import { State } from "$root/defaults/interfaces.ts";
 import { AppProperties } from "$root/defaults/interfaces.ts";
 import Navbar from "$root/routes/(_islands)/Navbar.tsx";
 
