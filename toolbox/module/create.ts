@@ -1,3 +1,7 @@
+/**
+ * Creates a new module.
+ * @param name The module name.
+ */
 export async function createModule(name: string): Promise<void> {
   if (!name.match(/^[a-zA-Z0-9](?:(?:\-(?!\-))?[a-zA-Z0-9]*)*[a-zA-Z0-9]$/)) {
     console.error("Module names must be in kebab case.");
@@ -58,16 +62,32 @@ export async function createModule(name: string): Promise<void> {
   formatter.output();
 }
 
+/**
+ * Creates a new file at given path.
+ * @param path The file path.
+ * @param content The file content.
+ * @returns The creation promise.
+ */
 function createFile(path: string, content: string): Promise<void> {
   console.log(`Creating file ${path}...`);
   return Deno.writeTextFile(path, content);
 }
 
+/**
+ * Creates a new directory at given path.
+ * @param path The directory path.
+ * @returns The creation promise.
+ */
 function createDir(path: string): Promise<void> {
   console.log(`Creating directory ${path}...`);
   return Deno.mkdir(path);
 }
 
+/**
+ * Create the index content.
+ * @param _name The module capitalized name.
+ * @returns The index content.
+ */
 function getIndexContent(_name: string) {
   return `
     import makeIndex from "$root/defaults/makeIndex.ts";
@@ -75,6 +95,11 @@ function getIndexContent(_name: string) {
   `;
 }
 
+/**
+ * Create the partials index content.
+ * @param name The module capitalized name.
+ * @returns The partials index content.
+ */
 function getPartialIndexContent(name: string) {
   return `
     import {
@@ -93,6 +118,11 @@ function getPartialIndexContent(name: string) {
   `;
 }
 
+/**
+ * Create the props content.
+ * @param name The module capitalized name.
+ * @returns The props content.
+ */
 function getPropsContent(name: string) {
   return `
     import { AppProperties } from "$root/defaults/interfaces.ts";
@@ -111,6 +141,11 @@ function getPropsContent(name: string) {
   `;
 }
 
+/**
+ * Create the API example content.
+ * @param _name The module capitalized name.
+ * @returns The API example content.
+ */
 function getApiExampleContent(_name: string) {
   return `
     import { Handlers } from "$fresh/server.ts";

@@ -16,14 +16,14 @@ export function getPartialsConfig(): RouteConfig {
 
 /**
  * Partialize the given page for optimized rendering.
- * @param page The partial `Route` object to partialize. 
+ * @param page The partial `Route` object to partialize.
  * @returns The partialized version of `page`.
  * @example
  * // Page defintion...
  * async function Page(_request: Request, context: FreshContext<State>) {
  *   return <h2>My super page!</h2>;
  * }
- * 
+ *
  * // Partial code that should be at each file's end.
  * export const config = getPartialsConfig();
  * export default makePartials(Page);

@@ -5,7 +5,7 @@ import { Database } from "@db/sqlite";
  *
  * Read all SQL files in init directory and create
  * associated SQLite database file.
- * 
+ *
  * **Must not be used out of statup use-case.**
  */
 export default async function ensureDatabases(): Promise<void> {
