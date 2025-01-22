@@ -1,17 +1,16 @@
-import { Partial } from "$fresh/runtime.ts";
-import { RouteConfig } from "$fresh/server.ts";
+import ConsultMobility from "$root/routes/(apps)/mobility/(_islands)/ConsultMobility.tsx";
+import { getPartialsConfig, makePartials } from "$root/defaults/makePartials.tsx";
+import { FreshContext } from "$fresh/server.ts";
+import { State } from "$root/routes/_middleware.ts";
 
-type ModulesProps = Record<string | number | symbol, never>;
-
-export const config: RouteConfig = {
-  skipAppWrapper: true,
-  skipInheritedLayouts: true,
-};
-
-export default function Modules(_props: ModulesProps) {
+async function Mobility(_request: Request, _context: FreshContext<State>) {
   return (
-    <Partial name="body">
-      <a href="mobility" f-partial={"notes/partials"}>mobility</a>
-    </Partial>
+    <>
+      <h1>Edit mobility</h1>
+      <ConsultMobility />
+    </>
   );
 }
+
+export const config = getPartialsConfig();
+export default makePartials(Mobility);
