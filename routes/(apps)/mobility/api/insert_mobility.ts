@@ -9,24 +9,30 @@ export const handler: Handlers = {
       connection.run("ATTACH DATABASE 'databases/data/students.db' AS students");
       console.log("Connected to databases.");
 
-      // Récupération des mobilités
+      const students = connection.prepare(
+        `SELECT 
+          students.userId AS id, 
+          students.firstName, 
+          students.lastName, 
+          students.promotionId AS promotionId, 
+          promotions.name AS promotionName
+         FROM students.students
+         LEFT JOIN students.promotions ON students.promotionId = promotions.id`
+      ).all();
+
       const mobilities = connection.prepare(
         `SELECT 
           mobility.id, 
           mobility.studentId, 
-          students.firstName, 
-          students.lastName, 
           mobility.startDate, 
           mobility.endDate, 
           mobility.weeksCount, 
           mobility.destinationCountry, 
           mobility.destinationName, 
           mobility.mobilityStatus 
-        FROM mobility
-        LEFT JOIN students.students ON mobility.studentId = students.userId`
+        FROM mobility`
       ).all();
 
-      // Récupération des promotions
       const promotions = connection.prepare(
         `SELECT id, name FROM students.promotions`
       ).all();
@@ -34,7 +40,7 @@ export const handler: Handlers = {
       connection.close();
 
       return new Response(
-        JSON.stringify({ mobilities, promotions }),
+        JSON.stringify({ mobilities, students, promotions }),
         {
           status: 200,
           headers: { "Content-Type": "application/json" },

@@ -5,11 +5,16 @@ interface Promotion {
   name: string;
 }
 
+interface Student {
+  id: string;
+  firstName: string;
+  lastName: string;
+  promotionId: number;
+}
+
 interface Mobility {
   id: number;
   studentId: string;
-  firstName: string;
-  lastName: string;
   startDate: string | null;
   endDate: string | null;
   weeksCount: number | null;
@@ -19,7 +24,7 @@ interface Mobility {
 }
 
 export default function ConsultMobility() {
-  const [data, setData] = useState<{ promotions?: Promotion[]; mobilities: Mobility[] } | null>(null);
+  const [data, setData] = useState<{ promotions?: Promotion[]; students?: Student[]; mobilities?: Mobility[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,21 +79,24 @@ export default function ConsultMobility() {
               </tr>
             </thead>
             <tbody>
-              {data.mobilities
-                .filter((mobility) => mobility.studentId.startsWith(String(promo.id)))
-                .map((mobility) => (
-                  <tr key={mobility.id}>
-                    <td>{mobility.id}</td>
-                    <td>{mobility.firstName}</td>
-                    <td>{mobility.lastName}</td>
-                    <td>{mobility.startDate || "N/A"}</td>
-                    <td>{mobility.endDate || "N/A"}</td>
-                    <td>{mobility.weeksCount ?? "N/A"}</td>
-                    <td>{mobility.destinationCountry || "N/A"}</td>
-                    <td>{mobility.destinationName || "N/A"}</td>
-                    <td>{mobility.mobilityStatus}</td>
-                  </tr>
-                ))}
+              {data.students
+                ?.filter((student) => student.promotionId === promo.id)
+                .map((student) => {
+                  const mobility = data.mobilities?.find((mob) => mob.studentId === student.id);
+                  return (
+                    <tr key={student.id}>
+                      <td>{student.id}</td>
+                      <td>{student.firstName}</td>
+                      <td>{student.lastName}</td>
+                      <td>{mobility?.startDate || "N/A"}</td>
+                      <td>{mobility?.endDate || "N/A"}</td>
+                      <td>{mobility?.weeksCount ?? "N/A"}</td>
+                      <td>{mobility?.destinationCountry || "N/A"}</td>
+                      <td>{mobility?.destinationName || "N/A"}</td>
+                      <td>{mobility?.mobilityStatus || "N/A"}</td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
