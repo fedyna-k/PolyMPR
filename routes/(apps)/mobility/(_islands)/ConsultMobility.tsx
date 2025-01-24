@@ -19,7 +19,7 @@ interface Mobility {
 }
 
 export default function ConsultMobility() {
-  const [data, setData] = useState<{ promotions: Promotion[]; mobilities: Mobility[] } | null>(null);
+  const [data, setData] = useState<{ promotions?: Promotion[]; mobilities: Mobility[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,11 +45,18 @@ export default function ConsultMobility() {
     fetchData();
   }, []);
 
+  if (error) {
+    return <p className="error">{error}</p>;
+  }
+
+  if (!data?.promotions) {
+    return <p>No promotions found.</p>;
+  }
+
   return (
     <section>
       <h2>Consult Mobility</h2>
-      {error && <p className="error">{error}</p>}
-      {data?.promotions.map((promo) => (
+      {data.promotions.map((promo) => (
         <div key={promo.id}>
           <h3>Promotion: {promo.name}</h3>
           <table>

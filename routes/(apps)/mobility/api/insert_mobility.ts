@@ -6,10 +6,10 @@ export const handler: Handlers = {
     try {
       console.log("Connecting to mobility database...");
       const connection = new Database("databases/data/mobility.db", { create: false });
-
-      console.log("Connected to student database.");
       connection.run("ATTACH DATABASE 'databases/data/students.db' AS students");
+      console.log("Connected to databases.");
 
+      // Récupération des mobilités
       const mobilities = connection.prepare(
         `SELECT 
           mobility.id, 
@@ -26,8 +26,20 @@ export const handler: Handlers = {
         LEFT JOIN students.students ON mobility.studentId = students.userId`
       ).all();
 
+      // Récupération des promotions
+      const promotions = connection.prepare(
+        `SELECT id, name FROM students.promotions`
+      ).all();
+
       connection.close();
-      return new Response(JSON.stringify({ mobilities }), { status: 200, headers: { "Content-Type": "application/json" } });
+
+      return new Response(
+        JSON.stringify({ mobilities, promotions }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     } catch (error) {
       console.error("Error fetching mobility data:", error);
       return new Response("Failed to fetch data", { status: 500 });
