@@ -65,15 +65,30 @@ export const handler: Handlers = {
 
       const connection = new Database("databases/data/mobility.db", { create: false });
 
+      console.log("Attaching students database...");
+      connection.run("ATTACH DATABASE 'databases/data/students.db' AS students");
+      console.log("Students database attached successfully.");
+
+      const testStudents = connection.prepare("SELECT COUNT(*) AS count FROM students.students").get();
+      console.log(`Students table accessible, total records: ${testStudents.count}`);
+
       const insertQuery = connection.prepare(
         `INSERT INTO mobility (
-          studentId, startDate, endDate, weeksCount, destinationCountry, destinationName, mobilityStatus
+          id, studentId, startDate, endDate, weeksCount, destinationCountry, destinationName, mobilityStatus
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?)`
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          startDate = excluded.startDate,
+          endDate = excluded.endDate,
+          weeksCount = excluded.weeksCount,
+          destinationCountry = excluded.destinationCountry,
+          destinationName = excluded.destinationName,
+          mobilityStatus = excluded.mobilityStatus`
       );
-
+      
       for (const mobility of data) {
         const {
+          id = null,
           studentId,
           startDate,
           endDate,
@@ -82,12 +97,35 @@ export const handler: Handlers = {
           destinationName,
           mobilityStatus = "N/A",
         } = mobility;
-
+      
+        let calculatedWeeksCount = weeksCount;
+        if (startDate && endDate) {
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          if (start <= end) {
+            calculatedWeeksCount = Math.ceil((end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000));
+          } else {
+            calculatedWeeksCount = null;
+          }
+        }
+      
+        console.log(`Inserting/Updating mobility for studentId: ${studentId}`);
+      
+        const studentExists = connection
+          .prepare(`SELECT COUNT(*) AS count FROM students.students WHERE userId = ?`)
+          .get(studentId);
+      
+        if (studentExists.count === 0) {
+          console.warn(`Skipping mobility for unknown studentId: ${studentId}`);
+          continue;
+        }
+      
         insertQuery.run(
+          id,
           studentId,
           startDate,
           endDate,
-          weeksCount,
+          calculatedWeeksCount,
           destinationCountry,
           destinationName,
           mobilityStatus
@@ -95,12 +133,11 @@ export const handler: Handlers = {
       }
 
       connection.close();
-
-      console.log("Mobility data inserted successfully");
-      return new Response("Data inserted successfully", { status: 201 });
+      console.log("Mobility data inserted/updated successfully.");
+      return new Response("Data inserted/updated successfully", { status: 200 });
     } catch (error) {
       console.error("Error inserting mobility data:", error);
-      return new Response("Failed to insert data", { status: 500 });
+      return new Response("Failed to insert/update data", { status: 500 });
     }
   },
 };

@@ -1,4 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
+import { Database } from "@db/sqlite";
 import connect from "$root/databases/connect.ts";
 
 export const handler: Handlers = {
@@ -7,7 +8,7 @@ export const handler: Handlers = {
       using connection = connect("students");
 
       const promotions = connection.database.prepare(
-        "select id from promotions",
+        "select id, name from promotions",
       ).all();
 
       const students = connection.database
@@ -30,7 +31,7 @@ export const handler: Handlers = {
   },
 
   async POST(request) {
-    console.log("API /mobility/api/insert_students called");
+    console.log("API /students/api/insert_students called");
 
     try {
       const body = await request.json();
@@ -48,7 +49,7 @@ export const handler: Handlers = {
         "INSERT OR IGNORE INTO promotions (name) VALUES (?)",
       ).run(promoName);
 
-      const promoIdRow: {id: string} = connection.database
+      const promoIdRow: { id: number } = connection.database
         .prepare("SELECT id FROM promotions WHERE name = ?")
         .get(promoName)!;
       const promoId = promoIdRow.id;
@@ -56,12 +57,20 @@ export const handler: Handlers = {
       console.log(`Promotion ID for "${promoName}":`, promoId);
 
       const insertQuery = connection.database.prepare(
-        "INSERT INTO students (firstName, lastName, mail, promotionId) VALUES (?, ?, ?, ?)",
+        `INSERT INTO students 
+        (userId, firstName, lastName, mail, promotionId) 
+        VALUES (?, ?, ?, ?, ?)`,
       );
 
       for (const student of data) {
         console.log("Inserting student:", student);
-        insertQuery.run(student.Nom, student["Prénom"], student.Mail, promoId);
+        insertQuery.run(
+          student.Identifiant,
+          student.Nom,
+          student["Prénom"],
+          student.Mail,
+          promoId,
+        );
       }
 
       console.log("All data inserted successfully");

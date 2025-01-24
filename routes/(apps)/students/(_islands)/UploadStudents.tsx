@@ -33,9 +33,11 @@ export default function UploadStudents() {
         for (const sheetName of workbook.SheetNames) {
           const sheet = workbook.Sheets[sheetName];
           const data = XLSX.utils.sheet_to_json(sheet, {
-            header: ["Nom", "Prénom", "Mail"], 
+            header: ["Identifiant", "Nom", "Prénom", "Mail"],
             range: 1, // Ignorer les en-têtes
           });
+
+          console.log(`Data from sheet ${sheetName}:`, data);
 
           const response = await fetch("/students/api/insert_students", {
             method: "POST",

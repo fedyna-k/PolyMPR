@@ -13,7 +13,7 @@ interface Promotion {
 }
 
 interface Mobility {
-  id: number;
+  id: number | null;
   studentId: string;
   startDate: string | null;
   endDate: string | null;
@@ -63,7 +63,20 @@ export default function EditMobility() {
 
       const updatedMobilities = prevData.mobilities?.map((mobility) => {
         if (mobility.studentId === studentId) {
-          return { ...mobility, [field]: value };
+          const updatedMobility = { ...mobility, [field]: value };
+
+          if (field === "startDate" || field === "endDate") {
+            const startDate = new Date(updatedMobility.startDate || "");
+            const endDate = new Date(updatedMobility.endDate || "");
+            if (startDate && endDate && startDate <= endDate) {
+              const weeks = Math.ceil((endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+              updatedMobility.weeksCount = weeks;
+            } else {
+              updatedMobility.weeksCount = null;
+            }
+          }
+
+          return updatedMobility;
         }
         return mobility;
       }) || [];
@@ -86,7 +99,7 @@ export default function EditMobility() {
 
       if (response.ok) {
         alert("Data saved successfully!");
-        window.location.reload(); // Refresh the page to load updated data
+        window.location.reload();
       } else {
         throw new Error(`Failed to save data: ${response.statusText}`);
       }
@@ -131,6 +144,7 @@ export default function EditMobility() {
                 ?.filter((student) => student.promotionId === promo.id)
                 .map((student) => {
                   const mobility = data.mobilities?.find((mob) => mob.studentId === student.id) || {
+                    id: null,
                     studentId: student.id,
                     startDate: null,
                     endDate: null,
@@ -159,15 +173,7 @@ export default function EditMobility() {
                           onChange={(e) => handleChange(student.id, "endDate", e.target.value)}
                         />
                       </td>
-                      <td>
-                        <input
-                          type="number"
-                          value={mobility.weeksCount || ""}
-                          onChange={(e) =>
-                            handleChange(student.id, "weeksCount", Number(e.target.value) || null)
-                          }
-                        />
-                      </td>
+                      <td>{mobility.weeksCount ?? "N/A"}</td>
                       <td>
                         <input
                           type="text"

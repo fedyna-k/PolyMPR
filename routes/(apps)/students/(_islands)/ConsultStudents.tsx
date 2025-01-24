@@ -6,12 +6,11 @@ interface Promotion {
 }
 
 interface Student {
-  id: number;
+  userId: string;
   firstName: string;
   lastName: string;
   mail: string;
   promotionId: number;
-  promotionName: string;
 }
 
 export default function ConsultStudents() {
@@ -27,6 +26,7 @@ export default function ConsultStudents() {
         }
 
         const result = await response.json();
+        console.log("Fetched data:", result);
         setData(result);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -43,7 +43,7 @@ export default function ConsultStudents() {
       {error && <p className="error">{error}</p>}
       {data?.promotions.map((promo) => (
         <div key={promo.id}>
-          <h3>Promotion: {promo.id}</h3> 
+          <h3>Promotion: {promo.name}</h3>
           <table>
             <thead>
               <tr>
@@ -57,8 +57,8 @@ export default function ConsultStudents() {
               {data.students
                 .filter((student) => student.promotionId === promo.id)
                 .map((student) => (
-                  <tr key={student.id}>
-                    <td>{student.id}</td>
+                  <tr key={student.userId}>
+                    <td>{student.userId}</td>
                     <td>{student.firstName}</td>
                     <td>{student.lastName}</td>
                     <td>{student.mail}</td>
