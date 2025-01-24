@@ -4,7 +4,11 @@ import { Database } from "@db/sqlite";
 export const handler: Handlers = {
   async GET() {
     try {
+      console.log("Connecting to mobility database...");
       const connection = new Database("databases/data/mobility.db", { create: false });
+
+      console.log("Connected to student database.");
+      connection.run("ATTACH DATABASE 'databases/data/students.db' AS students");
 
       const mobilities = connection.prepare(
         `SELECT 
@@ -19,18 +23,11 @@ export const handler: Handlers = {
           mobility.destinationName, 
           mobility.mobilityStatus 
         FROM mobility
-        LEFT JOIN students ON mobility.studentId = students.userId`
+        LEFT JOIN students.students ON mobility.studentId = students.userId`
       ).all();
 
       connection.close();
-
-      return new Response(
-        JSON.stringify({ mobilities }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return new Response(JSON.stringify({ mobilities }), { status: 200, headers: { "Content-Type": "application/json" } });
     } catch (error) {
       console.error("Error fetching mobility data:", error);
       return new Response("Failed to fetch data", { status: 500 });
@@ -38,7 +35,7 @@ export const handler: Handlers = {
   },
 
   async POST(request) {
-    console.log("API /mobility/api/insert_mobility called");
+    console.log("API /mobility/api/insert_mobility POST called");
 
     try {
       const body = await request.json();

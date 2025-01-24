@@ -24,16 +24,20 @@ export default function ConsultMobility() {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("ConsultMobility: Fetching data from API...");
       try {
         const response = await fetch("/mobility/api/insert_mobility");
+        console.log("ConsultMobility: API response status:", response.status);
+
         if (!response.ok) {
           throw new Error(`Error fetching data: ${response.statusText}`);
         }
 
         const result = await response.json();
+        console.log("ConsultMobility: Data fetched successfully:", result);
         setData(result);
       } catch (err) {
-        console.error("Error fetching mobility data:", err);
+        console.error("ConsultMobility: Error fetching data:", err);
         setError("Failed to load mobility data. Please try again later.");
       }
     };
@@ -47,7 +51,7 @@ export default function ConsultMobility() {
       {error && <p className="error">{error}</p>}
       {data?.promotions.map((promo) => (
         <div key={promo.id}>
-          <h3>Promotion: {promo.id}</h3>
+          <h3>Promotion: {promo.name}</h3>
           <table>
             <thead>
               <tr>

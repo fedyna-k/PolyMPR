@@ -18,44 +18,48 @@ export default function EditMobility() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    async function fetchMobilityData() {
-      const response = await fetch("/mobility/api/insert_mobility");
-      const data = await response.json();
-      setMobilityData(data.mobilities || []);
-    }
+    const fetchMobilityData = async () => {
+      console.log("EditMobility: Fetching mobility data...");
+      try {
+        const response = await fetch("/mobility/api/insert_mobility");
+        console.log("EditMobility: API response status:", response.status);
+
+        if (!response.ok) {
+          throw new Error(`Error fetching data: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("EditMobility: Data fetched successfully:", data);
+        setMobilityData(data.mobilities || []);
+      } catch (err) {
+        console.error("EditMobility: Error fetching data:", err);
+      }
+    };
 
     fetchMobilityData();
   }, []);
 
-  const handleChange = (
-    id: number,
-    field: keyof MobilityData,
-    value: string | number | null,
-  ) => {
-    setMobilityData((prev) =>
-      prev.map((entry) =>
-        entry.id === id ? { ...entry, [field]: value } : entry,
-      )
-    );
-  };
-
   const handleSave = async () => {
+    console.log("EditMobility: Saving data...");
     setIsSaving(true);
 
     try {
-      const response = await fetch("/mobility/api/insert_mobility", { 
+      const response = await fetch("/mobility/api/insert_mobility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: mobilityData }),
       });
 
+      console.log("EditMobility: Save response status:", response.status);
+
       if (response.ok) {
+        console.log("EditMobility: Data saved successfully.");
         alert("Data saved successfully!");
       } else {
-        alert("Failed to save data.");
+        throw new Error(`Failed to save data: ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Error saving data:", error);
+      console.error("EditMobility: Error saving data:", error);
       alert("An error occurred while saving data.");
     } finally {
       setIsSaving(false);
@@ -87,7 +91,13 @@ export default function EditMobility() {
                   type="date"
                   value={mobility.startDate || ""}
                   onChange={(e) =>
-                    handleChange(mobility.id, "startDate", e.target.value)
+                    setMobilityData((prev) =>
+                      prev.map((entry) =>
+                        entry.id === mobility.id
+                          ? { ...entry, startDate: e.target.value }
+                          : entry
+                      )
+                    )
                   }
                 />
               </td>
@@ -96,7 +106,13 @@ export default function EditMobility() {
                   type="date"
                   value={mobility.endDate || ""}
                   onChange={(e) =>
-                    handleChange(mobility.id, "endDate", e.target.value)
+                    setMobilityData((prev) =>
+                      prev.map((entry) =>
+                        entry.id === mobility.id
+                          ? { ...entry, endDate: e.target.value }
+                          : entry
+                      )
+                    )
                   }
                 />
               </td>
@@ -105,10 +121,12 @@ export default function EditMobility() {
                   type="number"
                   value={mobility.weeksCount || ""}
                   onChange={(e) =>
-                    handleChange(
-                      mobility.id,
-                      "weeksCount",
-                      Number(e.target.value) || null,
+                    setMobilityData((prev) =>
+                      prev.map((entry) =>
+                        entry.id === mobility.id
+                          ? { ...entry, weeksCount: Number(e.target.value) || null }
+                          : entry
+                      )
                     )
                   }
                 />
@@ -118,7 +136,13 @@ export default function EditMobility() {
                   type="text"
                   value={mobility.destinationCountry || ""}
                   onChange={(e) =>
-                    handleChange(mobility.id, "destinationCountry", e.target.value)
+                    setMobilityData((prev) =>
+                      prev.map((entry) =>
+                        entry.id === mobility.id
+                          ? { ...entry, destinationCountry: e.target.value }
+                          : entry
+                      )
+                    )
                   }
                 />
               </td>
@@ -127,7 +151,13 @@ export default function EditMobility() {
                   type="text"
                   value={mobility.destinationName || ""}
                   onChange={(e) =>
-                    handleChange(mobility.id, "destinationName", e.target.value)
+                    setMobilityData((prev) =>
+                      prev.map((entry) =>
+                        entry.id === mobility.id
+                          ? { ...entry, destinationName: e.target.value }
+                          : entry
+                      )
+                    )
                   }
                 />
               </td>
@@ -135,7 +165,13 @@ export default function EditMobility() {
                 <select
                   value={mobility.mobilityStatus}
                   onChange={(e) =>
-                    handleChange(mobility.id, "mobilityStatus", e.target.value)
+                    setMobilityData((prev) =>
+                      prev.map((entry) =>
+                        entry.id === mobility.id
+                          ? { ...entry, mobilityStatus: e.target.value }
+                          : entry
+                      )
+                    )
                   }
                 >
                   <option value="N/A">N/A</option>

@@ -3,9 +3,9 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
+import * as $_apps_mobility_api_insert_mobility from "./routes/(apps)/mobility/api/insert_mobility.ts";
 import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_mobility_partials_admin_edit_mobility from "./routes/(apps)/mobility/partials/(admin)/edit_mobility.tsx";
-import * as $_apps_mobility_partials_admin_consult_students_test from "./routes/(apps)/mobility/partials/(admin)/consult_students_test.tsx";
 import * as $_apps_mobility_partials_index from "./routes/(apps)/mobility/partials/index.tsx";
 import * as $_apps_mobility_partials_overview from "./routes/(apps)/mobility/partials/overview.tsx";
 import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
@@ -30,7 +30,6 @@ import * as $logout from "./routes/logout.tsx";
 import * as $_islands_AppNavigator from "./routes/(_islands)/AppNavigator.tsx";
 import * as $_islands_Navbar from "./routes/(_islands)/Navbar.tsx";
 import * as $_apps_mobility_islands_ConsultMobility from "./routes/(apps)/mobility/(_islands)/ConsultMobility.tsx";
-import * as $_apps_mobility_islands_ConsultStudents_test from "./routes/(apps)/mobility/(_islands)/ConsultStudents_test.tsx";
 import * as $_apps_mobility_islands_EditMobility from "./routes/(apps)/mobility/(_islands)/EditMobility.tsx";
 import * as $_apps_mobility_islands_ImportFile from "./routes/(apps)/mobility/(_islands)/ImportFile.tsx";
 import * as $_apps_students_islands_ConsultStudents from "./routes/(apps)/students/(_islands)/ConsultStudents.tsx";
@@ -41,11 +40,11 @@ import type { Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/(apps)/_layout.tsx": $_apps_layout,
+    "./routes/(apps)/mobility/api/insert_mobility.ts":
+      $_apps_mobility_api_insert_mobility,
     "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
     "./routes/(apps)/mobility/partials/(admin)/edit_mobility.tsx":
       $_apps_mobility_partials_admin_edit_mobility,
-    "./routes/(apps)/mobility/partials/(admin)/consult_students_test.tsx":
-      $_apps_mobility_partials_admin_consult_students_test,
     "./routes/(apps)/mobility/partials/index.tsx":
       $_apps_mobility_partials_index,
     "./routes/(apps)/mobility/partials/overview.tsx":
@@ -82,8 +81,6 @@ const manifest = {
     "./routes/(_islands)/Navbar.tsx": $_islands_Navbar,
     "./routes/(apps)/mobility/(_islands)/ConsultMobility.tsx":
       $_apps_mobility_islands_ConsultMobility,
-    "./routes/(apps)/mobility/(_islands)/ConsultStudents_test.tsx":
-      $_apps_mobility_islands_ConsultStudents_test,
     "./routes/(apps)/mobility/(_islands)/EditMobility.tsx":
       $_apps_mobility_islands_EditMobility,
     "./routes/(apps)/mobility/(_islands)/ImportFile.tsx":
