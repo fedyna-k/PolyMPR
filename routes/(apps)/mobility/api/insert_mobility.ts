@@ -62,15 +62,12 @@ export const handler: Handlers = {
       if (!Array.isArray(data)) {
         throw new Error("Invalid request body");
       }
-
+      console.log("Connecting to mobility database...");
       const connection = new Database("databases/data/mobility.db", { create: false });
 
       console.log("Attaching students database...");
       connection.run("ATTACH DATABASE 'databases/data/students.db' AS students");
       console.log("Students database attached successfully.");
-
-      const testStudents = connection.prepare("SELECT COUNT(*) AS count FROM students.students").get();
-      console.log(`Students table accessible, total records: ${testStudents.count}`);
 
       const insertQuery = connection.prepare(
         `INSERT INTO mobility (
@@ -85,10 +82,10 @@ export const handler: Handlers = {
           destinationName = excluded.destinationName,
           mobilityStatus = excluded.mobilityStatus`
       );
-      
+
       for (const mobility of data) {
         const {
-          id = null,
+          id,
           studentId,
           startDate,
           endDate,
@@ -97,7 +94,20 @@ export const handler: Handlers = {
           destinationName,
           mobilityStatus = "N/A",
         } = mobility;
-      
+
+        console.log("Processing mobility data:", mobility);
+
+        const studentExists = connection
+          .prepare(`SELECT COUNT(*) AS count FROM students.students WHERE userId = ?`)
+          .get(studentId);
+
+        console.log(`Student ${studentId} exists:`, studentExists.count > 0);
+
+        if (studentExists.count === 0) {
+          console.warn(`Skipping mobility for unknown studentId: ${studentId}`);
+          continue;
+        }
+
         let calculatedWeeksCount = weeksCount;
         if (startDate && endDate) {
           const start = new Date(startDate);
@@ -108,18 +118,18 @@ export const handler: Handlers = {
             calculatedWeeksCount = null;
           }
         }
-      
-        console.log(`Inserting/Updating mobility for studentId: ${studentId}`);
-      
-        const studentExists = connection
-          .prepare(`SELECT COUNT(*) AS count FROM students.students WHERE userId = ?`)
-          .get(studentId);
-      
-        if (studentExists.count === 0) {
-          console.warn(`Skipping mobility for unknown studentId: ${studentId}`);
-          continue;
-        }
-      
+
+        console.log("Executing SQL insert/update query for:", {
+          id,
+          studentId,
+          startDate,
+          endDate,
+          calculatedWeeksCount,
+          destinationCountry,
+          destinationName,
+          mobilityStatus,
+        });
+
         insertQuery.run(
           id,
           studentId,
