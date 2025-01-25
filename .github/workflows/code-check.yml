@@ -1,4 +1,4 @@
-name: "Check Deno code"
+name: Check Deno code
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   check-code:
-    name: "Check Deno code"
+    name: Check Deno code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
