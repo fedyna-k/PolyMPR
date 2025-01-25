@@ -4,6 +4,7 @@
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
     "pmpr": "deno run -A toolbox/cli.ts",
+    "compile": "deno compile -A --output \"/home/$USER/.deno/bin/pmpr\" toolbox/cli.ts",
     "manifest": "deno task cli manifest $(pwd)",
     "start": "deno run -A --unstable-ffi --watch=static/,routes/ dev.ts",
     "build": "deno run -A --unstable-ffi dev.ts build",

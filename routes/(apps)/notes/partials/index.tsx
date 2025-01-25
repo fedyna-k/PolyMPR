@@ -2,11 +2,12 @@ import {
   getPartialsConfig,
   makePartials,
 } from "$root/defaults/makePartials.tsx";
+import { FreshContext } from "$fresh/server.ts";
+import { State } from "$root/routes/_middleware.ts";
 
-type NotesIndexProps = Record<string | number | symbol, never>;
-
-export function Index(_props: NotesIndexProps) {
-  return <a href="notes" f-partial={"notes/partials"}>bip boup</a>;
+// deno-lint-ignore require-await
+export async function Index(_request: Request, context: FreshContext<State>) {
+  return <h2>Welcome to {context.state.session?.displayName}.</h2>;
 }
 
 export const config = getPartialsConfig();

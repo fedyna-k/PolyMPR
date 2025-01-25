@@ -1,6 +1,14 @@
 import { Database } from "@db/sqlite";
 
-export default async function ensureDatabases() {
+/**
+ * Ensure database file creation on new server start.
+ *
+ * Read all SQL files in init directory and create
+ * associated SQLite database file.
+ *
+ * **Must not be used out of statup use-case.**
+ */
+export default async function ensureDatabases(): Promise<void> {
   await Deno.mkdir("databases/data", { recursive: true });
 
   for await (const file of Deno.readDir("databases/init")) {
