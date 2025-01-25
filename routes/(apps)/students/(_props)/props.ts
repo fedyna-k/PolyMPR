@@ -5,10 +5,12 @@ const properties: AppProperties = {
   icon: "badge",
   pages: {
     index: "Homepage",
+    overview: "Students overview",
     upload: "Upload students",
+    consult: "Consult students",
   },
-  adminOnly: ["upload"],
-  hint: "See student information",
+  adminOnly: ["upload", "consult"],
+  hint: "Create students promotion and see informations",
 };
 
 export default properties;

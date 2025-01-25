@@ -1,4 +1,4 @@
-import ConsultMobility from "$root/routes/(apps)/mobility/(_islands)/ConsultMobility.tsx";
+import EditMobility from "$root/routes/(apps)/mobility/(_islands)/EditMobility.tsx";
 import {
   getPartialsConfig,
   makePartials,
@@ -11,7 +11,7 @@ async function Mobility(_request: Request, _context: FreshContext<State>) {
   return (
     <>
       <h1>Edit mobility</h1>
-      <ConsultMobility />
+      <EditMobility />
     </>
   );
 }

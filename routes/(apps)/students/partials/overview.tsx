@@ -11,7 +11,7 @@ export const config: RouteConfig = {
 export default function Modules(_props: ModulesProps) {
   return (
     <Partial name="body">
-      <a href="mobility" f-partial={"notes/partials"}>mobility</a>
+      <a href="students" f-partial={"notes/partials"}>students</a>
     </Partial>
   );
 }

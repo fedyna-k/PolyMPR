@@ -11,7 +11,6 @@ export default function UploadStudents() {
     if (input.files && input.files.length > 0) {
       fileData.value = input.files[0];
       statusMessage.value = "File selected: " + input.files[0].name;
-      console.log("File selected:", input.files[0].name);
     } else {
       fileData.value = null;
       statusMessage.value = "No file selected";
@@ -19,10 +18,8 @@ export default function UploadStudents() {
   };
 
   const confirmUpload = () => {
-    console.log("Confirm Upload");
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
-      console.error("Error: No file selected.");
       return;
     }
 
@@ -30,42 +27,33 @@ export default function UploadStudents() {
       const reader = new FileReader();
 
       reader.onload = async (e) => {
-        try {
-          const arrayBuffer = e.target?.result as ArrayBuffer;
-          const workbook = XLSX.read(arrayBuffer, { type: "array" });
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-          for (const sheetName of workbook.SheetNames) {
-            const sheet = workbook.Sheets[sheetName];
-            const data = XLSX.utils.sheet_to_json(sheet, {
-              header: ["Nom", "Prénom", "Mail"],
-              range: 1, // Ignorer les en-têtes
-            });
+        for (const sheetName of workbook.SheetNames) {
+          const sheet = workbook.Sheets[sheetName];
+          const data = XLSX.utils.sheet_to_json(sheet, {
+            header: ["Identifiant", "Nom", "Prénom", "Mail"],
+            range: 1, // Ignorer les en-têtes
+          });
 
-            console.log(`Data from sheet ${sheetName}:`, data);
+          console.log(`Data from sheet ${sheetName}:`, data);
 
-            const response = await fetch("/mobility/api/insert_students", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ promoName: sheetName, data }),
-            });
+          const response = await fetch("/students/api/insert_students", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ promoName: sheetName, data }),
+          });
 
-            if (!response.ok) {
-              throw new Error(
-                `Failed to insert data for promotion ${sheetName}`,
-              );
-            }
+          if (!response.ok) {
+            throw new Error(`Failed to insert data for promotion ${sheetName}`);
           }
-
-          statusMessage.value = "Data uploaded and inserted successfully!";
-        } catch (error) {
-          console.error("Error processing the file:", error);
-          statusMessage.value =
-            "Error processing the file. Please check its format.";
         }
+
+        statusMessage.value = "Data uploaded and inserted successfully!";
       };
 
-      reader.onerror = (e) => {
-        console.error("FileReader error:", e);
+      reader.onerror = () => {
         statusMessage.value = "Error reading the file.";
       };
 
