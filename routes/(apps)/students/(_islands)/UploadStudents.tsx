@@ -17,7 +17,7 @@ export default function UploadStudents() {
     }
   };
 
-  const confirmUpload = async () => {
+  const confirmUpload = () => {
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
       return;

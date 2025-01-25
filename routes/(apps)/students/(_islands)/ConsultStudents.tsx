@@ -14,7 +14,9 @@ interface Student {
 }
 
 export default function ConsultStudents() {
-  const [data, setData] = useState<{ promotions: Promotion[]; students: Student[] } | null>(null);
+  const [data, setData] = useState<
+    { promotions: Promotion[]; students: Student[] } | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

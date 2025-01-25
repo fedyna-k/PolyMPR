@@ -7,7 +7,7 @@ const properties: AppProperties = {
     index: "Homepage",
     overview: "Students overview",
     upload: "Upload students",
-    consult: "Consult students"
+    consult: "Consult students",
   },
   adminOnly: ["upload", "consult"],
   hint: "Create students promotion and see informations",

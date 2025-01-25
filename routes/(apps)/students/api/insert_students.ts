@@ -1,8 +1,9 @@
 import { Handlers } from "$fresh/server.ts";
-import { Database } from "@db/sqlite";
+// import { Database } from "@db/sqlite";
 import connect from "$root/databases/connect.ts";
 
 export const handler: Handlers = {
+  // deno-lint-ignore require-await
   async GET() {
     try {
       using connection = connect("students");

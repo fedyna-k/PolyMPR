@@ -15,7 +15,9 @@ interface Student {
 }
 
 export default function ConsultStudents_test() {
-  const [data, setData] = useState<{ promotions: Promotion[]; students: Student[] } | null>(null);
+  const [data, setData] = useState<
+    { promotions: Promotion[]; students: Student[] } | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function ConsultStudents_test() {
       {error && <p className="error">{error}</p>}
       {data?.promotions.map((promo) => (
         <div key={promo.id}>
-          <h3>Promotion: {promo.id}</h3> 
+          <h3>Promotion: {promo.id}</h3>
           <table>
             <thead>
               <tr>

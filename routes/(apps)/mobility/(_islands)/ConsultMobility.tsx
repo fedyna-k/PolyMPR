@@ -24,7 +24,14 @@ interface Mobility {
 }
 
 export default function ConsultMobility() {
-  const [data, setData] = useState<{ promotions?: Promotion[]; students?: Student[]; mobilities?: Mobility[] } | null>(null);
+  const [data, setData] = useState<
+    | {
+      promotions?: Promotion[];
+      students?: Student[];
+      mobilities?: Mobility[];
+    }
+    | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -82,7 +89,9 @@ export default function ConsultMobility() {
               {data.students
                 ?.filter((student) => student.promotionId === promo.id)
                 .map((student) => {
-                  const mobility = data.mobilities?.find((mob) => mob.studentId === student.id);
+                  const mobility = data.mobilities?.find((mob) =>
+                    mob.studentId === student.id
+                  );
                   return (
                     <tr key={student.id}>
                       <td>{student.id}</td>
