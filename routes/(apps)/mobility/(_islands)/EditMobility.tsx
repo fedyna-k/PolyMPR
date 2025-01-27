@@ -6,7 +6,7 @@ interface Promotion {
 }
 
 interface MobilityData {
-  id: number | null; // null pour les nouvelles entrées
+  id: number | null;
   studentId: string;
   firstName: string;
   lastName: string;
@@ -27,7 +27,6 @@ export default function EditMobility() {
 
   useEffect(() => {
     async function fetchMobilityData() {
-      console.log("EditMobility: Fetching data from API...");
       const response = await fetch("/mobility/api/insert_mobility");
       const data = await response.json();
       console.log("EditMobility: Data fetched successfully:", data);
@@ -39,7 +38,7 @@ export default function EditMobility() {
           (mobility: any) => mobility.studentId === student.id
         );
         return {
-          id: existingMobility ? existingMobility.id : null, // null si aucune mobilité existante
+          id: existingMobility ? existingMobility.id : null,
           studentId: student.id,
           firstName: student.firstName,
           lastName: student.lastName,
@@ -73,9 +72,7 @@ export default function EditMobility() {
 
   const handleSave = async () => {
     setIsSaving(true);
-
     try {
-      console.log("EditMobility: Sending data to API...");
       const response = await fetch("/mobility/api/insert_mobility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,7 +94,6 @@ export default function EditMobility() {
     }
   };
 
-  // Grouper les données par promotion
   const groupedData = promotions.map((promo) => ({
     promotion: promo.name,
     students: mobilityData.filter(
