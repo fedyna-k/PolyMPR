@@ -1,117 +1,93 @@
 import { useEffect, useState } from "preact/hooks";
 
-interface Student {
-  id: string;
-  firstName: string;
-  lastName: string;
-  promotionId: number;
-}
-
 interface Promotion {
   id: number;
   name: string;
 }
 
-interface Mobility {
-  id: number | null;
+interface MobilityData {
+  id: number | null; // null pour les nouvelles entrées
   studentId: string;
+  firstName: string;
+  lastName: string;
   startDate: string | null;
   endDate: string | null;
   weeksCount: number | null;
   destinationCountry: string | null;
   destinationName: string | null;
   mobilityStatus: string;
+  promotionId: number;
+  promotionName: string;
 }
 
 export default function EditMobility() {
-  const [data, setData] = useState<
-    | {
-      promotions?: Promotion[];
-      students?: Student[];
-      mobilities?: Mobility[];
-    }
-    | null
-  >(null);
-  const [error, setError] = useState<string | null>(null);
+  const [mobilityData, setMobilityData] = useState<MobilityData[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchMobilityData() {
       console.log("EditMobility: Fetching data from API...");
-      try {
-        const response = await fetch("/mobility/api/insert_mobility");
-        console.log("EditMobility: API response status:", response.status);
+      const response = await fetch("/mobility/api/insert_mobility");
+      const data = await response.json();
+      console.log("EditMobility: Data fetched successfully:", data);
 
-        if (!response.ok) {
-          throw new Error(`Error fetching data: ${response.statusText}`);
-        }
+      setPromotions(data.promotions);
 
-        const result = await response.json();
-        console.log("EditMobility: Data fetched successfully:", result);
-        setData(result);
-      } catch (err) {
-        console.error("EditMobility: Error fetching data:", err);
-        setError("Failed to load mobility data. Please try again later.");
-      }
-    };
+      const initializedData = data.students.map((student: any) => {
+        const existingMobility = data.mobilities.find(
+          (mobility: any) => mobility.studentId === student.id
+        );
+        return {
+          id: existingMobility ? existingMobility.id : null, // null si aucune mobilité existante
+          studentId: student.id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          startDate: existingMobility?.startDate || null,
+          endDate: existingMobility?.endDate || null,
+          weeksCount: existingMobility?.weeksCount || null,
+          destinationCountry: existingMobility?.destinationCountry || null,
+          destinationName: existingMobility?.destinationName || null,
+          mobilityStatus: existingMobility?.mobilityStatus || "N/A",
+          promotionId: student.promotionId,
+          promotionName: student.promotionName,
+        };
+      });
+      setMobilityData(initializedData);
+    }
 
-    fetchData();
+    fetchMobilityData();
   }, []);
 
   const handleChange = (
     studentId: string,
-    field: keyof Mobility,
-    value: string | number | null,
+    field: keyof MobilityData,
+    value: string | number | null
   ) => {
-    if (!data) return;
-
-    setData((prevData) => {
-      if (!prevData) return null;
-
-      const updatedMobilities = prevData.mobilities?.map((mobility) => {
-        if (mobility.studentId === studentId) {
-          const updatedMobility = { ...mobility, [field]: value };
-
-          if (field === "startDate" || field === "endDate") {
-            const startDate = new Date(updatedMobility.startDate || "");
-            const endDate = new Date(updatedMobility.endDate || "");
-            if (startDate && endDate && startDate <= endDate) {
-              const weeks = Math.ceil(
-                (endDate.getTime() - startDate.getTime()) /
-                  (7 * 24 * 60 * 60 * 1000),
-              );
-              updatedMobility.weeksCount = weeks;
-            } else {
-              updatedMobility.weeksCount = null;
-            }
-          }
-
-          return updatedMobility;
-        }
-        return mobility;
-      }) || [];
-
-      return { ...prevData, mobilities: updatedMobilities };
-    });
+    setMobilityData((prev) =>
+      prev.map((entry) =>
+        entry.studentId === studentId ? { ...entry, [field]: value } : entry
+      )
+    );
   };
 
   const handleSave = async () => {
     setIsSaving(true);
 
     try {
+      console.log("EditMobility: Sending data to API...");
       const response = await fetch("/mobility/api/insert_mobility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: data?.mobilities }),
+        body: JSON.stringify({ data: mobilityData }),
       });
-
-      console.log("EditMobility: Save response status:", response.status);
 
       if (response.ok) {
         alert("Data saved successfully!");
-        globalThis.location.reload();
+        console.log("EditMobility: Save response status:", response.status);
       } else {
-        throw new Error(`Failed to save data: ${response.statusText}`);
+        alert("Failed to save data.");
+        console.error("EditMobility: Save response status:", response.status);
       }
     } catch (error) {
       console.error("EditMobility: Error saving data:", error);
@@ -121,20 +97,20 @@ export default function EditMobility() {
     }
   };
 
-  if (error) {
-    return <p className="error">{error}</p>;
-  }
-
-  if (!data?.promotions) {
-    return <p>Loading data...</p>;
-  }
+  // Grouper les données par promotion
+  const groupedData = promotions.map((promo) => ({
+    promotion: promo.name,
+    students: mobilityData.filter(
+      (entry) => entry.promotionId === promo.id
+    ),
+  }));
 
   return (
-    <section>
+    <div>
       <h2>Edit Mobility</h2>
-      {data.promotions.map((promo) => (
-        <div key={promo.id}>
-          <h3>Promotion: {promo.name}</h3>
+      {groupedData.map((group) => (
+        <div key={group.promotion}>
+          <h3>Promotion: {group.promotion}</h3>
           <table>
             <thead>
               <tr>
@@ -150,92 +126,68 @@ export default function EditMobility() {
               </tr>
             </thead>
             <tbody>
-              {data.students
-                ?.filter((student) => student.promotionId === promo.id)
-                .map((student) => {
-                  const mobility = data.mobilities?.find((mob) =>
-                    mob.studentId === student.id
-                  ) || {
-                    id: null,
-                    studentId: student.id,
-                    startDate: null,
-                    endDate: null,
-                    weeksCount: null,
-                    destinationCountry: null,
-                    destinationName: null,
-                    mobilityStatus: "N/A",
-                  };
-
-                  return (
-                    <tr key={student.id}>
-                      <td>{student.id}</td>
-                      <td>{student.firstName}</td>
-                      <td>{student.lastName}</td>
-                      <td>
-                        <input
-                          type="date"
-                          value={mobility.startDate || ""}
-                          onChange={(e) =>
-                            handleChange(
-                              student.id,
-                              "startDate",
-                              e.target.value,
-                            )}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          value={mobility.endDate || ""}
-                          onChange={(e) =>
-                            handleChange(student.id, "endDate", e.target.value)}
-                        />
-                      </td>
-                      <td>{mobility.weeksCount ?? "N/A"}</td>
-                      <td>
-                        <input
-                          type="text"
-                          value={mobility.destinationCountry || ""}
-                          onChange={(e) =>
-                            handleChange(
-                              student.id,
-                              "destinationCountry",
-                              e.target.value,
-                            )}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={mobility.destinationName || ""}
-                          onChange={(e) =>
-                            handleChange(
-                              student.id,
-                              "destinationName",
-                              e.target.value,
-                            )}
-                        />
-                      </td>
-                      <td>
-                        <select
-                          value={mobility.mobilityStatus}
-                          onChange={(e) =>
-                            handleChange(
-                              student.id,
-                              "mobilityStatus",
-                              e.target.value,
-                            )}
-                        >
-                          <option value="N/A">N/A</option>
-                          <option value="Planned">Planned</option>
-                          <option value="In Progress">In Progress</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Validated">Validated</option>
-                        </select>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {group.students.map((entry) => (
+                <tr key={entry.studentId}>
+                  <td>{entry.studentId}</td>
+                  <td>{entry.firstName}</td>
+                  <td>{entry.lastName}</td>
+                  <td>
+                    <input
+                      type="date"
+                      value={entry.startDate || ""}
+                      onChange={(e) =>
+                        handleChange(entry.studentId, "startDate", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="date"
+                      value={entry.endDate || ""}
+                      onChange={(e) =>
+                        handleChange(entry.studentId, "endDate", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td>{entry.weeksCount || "N/A"}</td>
+                  <td>
+                    <input
+                      type="text"
+                      value={entry.destinationCountry || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          entry.studentId,
+                          "destinationCountry",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={entry.destinationName || ""}
+                      onChange={(e) =>
+                        handleChange(entry.studentId, "destinationName", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <select
+                      value={entry.mobilityStatus}
+                      onChange={(e) =>
+                        handleChange(entry.studentId, "mobilityStatus", e.target.value)
+                      }
+                    >
+                      <option value="N/A">N/A</option>
+                      <option value="Planned">Planned</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Validated">Validated</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -243,6 +195,6 @@ export default function EditMobility() {
       <button onClick={handleSave} disabled={isSaving}>
         {isSaving ? "Saving..." : "Confirm"}
       </button>
-    </section>
+    </div>
   );
 }
