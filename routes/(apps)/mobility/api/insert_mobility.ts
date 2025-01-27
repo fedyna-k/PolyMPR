@@ -82,7 +82,7 @@ export const handler: Handlers = {
 
       for (const mobility of data) {
         const {
-          id = null,
+          id,
           studentId,
           startDate,
           endDate,
