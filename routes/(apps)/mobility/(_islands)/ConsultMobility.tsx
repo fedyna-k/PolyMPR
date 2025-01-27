@@ -35,6 +35,7 @@ export default function ConsultMobility() {
             destinationCountry: existingMobility?.destinationCountry || null,
             destinationName: existingMobility?.destinationName || null,
             mobilityStatus: existingMobility?.mobilityStatus || "N/A",
+            attestationFile: existingMobility?.attestationFile || null, // Ajouter le fichier
             promotionId: student.promotionId,
             promotionName: student.promotionName,
           };
@@ -97,6 +98,7 @@ export default function ConsultMobility() {
                     <th>Destination Country</th>
                     <th>Destination Name</th>
                     <th>Status</th>
+                    <th>Attestation File</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,6 +115,19 @@ export default function ConsultMobility() {
                         <td>{entry.destinationCountry || "N/A"}</td>
                         <td>{entry.destinationName || "N/A"}</td>
                         <td>{entry.mobilityStatus}</td>
+                        <td>
+                          {entry.attestationFile ? (
+                            <a
+                              href={`/api/download/${entry.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download
+                            </a>
+                          ) : (
+                            "N/A"
+                          )}
+                        </td>
                       </tr>
                     ))}
                 </tbody>

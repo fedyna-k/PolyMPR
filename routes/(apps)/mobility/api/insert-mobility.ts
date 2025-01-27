@@ -16,7 +16,8 @@ export const handler: Handlers = {
           mobility.weeksCount, 
           mobility.destinationCountry, 
           mobility.destinationName, 
-          mobility.mobilityStatus 
+          mobility.mobilityStatus, 
+          mobility.attestationFile -- Inclure le fichier
         FROM mobility`
       ).all();
 
