@@ -49,31 +49,7 @@ export default function EditMobility() {
 
     setMobilityData((prev) =>
       prev.map((entry) =>
-        entry.studentId === studentId
-          ? { ...entry, attestationFile: file || null }
-          : entry
-      )
-    );
-  };
-
-  const handleRemoveFile = (studentId: string) => {
-    setMobilityData((prev) =>
-      prev.map((entry) =>
-        entry.studentId === studentId
-          ? { ...entry, attestationFile: null }
-          : entry
-      )
-    );
-  };
-
-  const handleChange = (
-    studentId: string,
-    field: keyof MobilityData,
-    value: string | number | null
-  ) => {
-    setMobilityData((prev) =>
-      prev.map((entry) =>
-        entry.studentId === studentId ? { ...entry, [field]: value } : entry
+        entry.studentId === studentId ? { ...entry, attestationFile: file } : entry
       )
     );
   };
@@ -105,8 +81,6 @@ export default function EditMobility() {
         }
       });
 
-      console.log("EditMobility: FormData prepared:", formData);
-
       const response = await fetch("/mobility/api/insert-mobility", {
         method: "POST",
         body: formData,
@@ -136,6 +110,10 @@ export default function EditMobility() {
     promotion: promo.name,
     students: filteredData.filter((entry) => entry.promotionId === promo.id),
   }));
+
+  const handleDownload = (id: number) => {
+    window.open(`/mobility/api/download/${id}`, "_blank");
+  };
 
   return (
     <div>
@@ -192,7 +170,13 @@ export default function EditMobility() {
                           type="date"
                           value={entry.startDate || ""}
                           onChange={(e) =>
-                            handleChange(entry.studentId, "startDate", e.target.value)
+                            setMobilityData((prev) =>
+                              prev.map((data) =>
+                                data.studentId === entry.studentId
+                                  ? { ...data, startDate: e.target.value }
+                                  : data
+                              )
+                            )
                           }
                         />
                       </td>
@@ -201,7 +185,13 @@ export default function EditMobility() {
                           type="date"
                           value={entry.endDate || ""}
                           onChange={(e) =>
-                            handleChange(entry.studentId, "endDate", e.target.value)
+                            setMobilityData((prev) =>
+                              prev.map((data) =>
+                                data.studentId === entry.studentId
+                                  ? { ...data, endDate: e.target.value }
+                                  : data
+                              )
+                            )
                           }
                         />
                       </td>
@@ -211,10 +201,12 @@ export default function EditMobility() {
                           type="text"
                           value={entry.destinationCountry || ""}
                           onChange={(e) =>
-                            handleChange(
-                              entry.studentId,
-                              "destinationCountry",
-                              e.target.value
+                            setMobilityData((prev) =>
+                              prev.map((data) =>
+                                data.studentId === entry.studentId
+                                  ? { ...data, destinationCountry: e.target.value }
+                                  : data
+                              )
                             )
                           }
                         />
@@ -224,7 +216,13 @@ export default function EditMobility() {
                           type="text"
                           value={entry.destinationName || ""}
                           onChange={(e) =>
-                            handleChange(entry.studentId, "destinationName", e.target.value)
+                            setMobilityData((prev) =>
+                              prev.map((data) =>
+                                data.studentId === entry.studentId
+                                  ? { ...data, destinationName: e.target.value }
+                                  : data
+                              )
+                            )
                           }
                         />
                       </td>
@@ -232,7 +230,13 @@ export default function EditMobility() {
                         <select
                           value={entry.mobilityStatus}
                           onChange={(e) =>
-                            handleChange(entry.studentId, "mobilityStatus", e.target.value)
+                            setMobilityData((prev) =>
+                              prev.map((data) =>
+                                data.studentId === entry.studentId
+                                  ? { ...data, mobilityStatus: e.target.value }
+                                  : data
+                              )
+                            )
                           }
                         >
                           <option value="N/A">N/A</option>
@@ -245,17 +249,21 @@ export default function EditMobility() {
                       <td>
                         {entry.attestationFile ? (
                           <>
-                            <a
-                              href={`/api/download/${entry.id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              View Current File
-                            </a>
+                            <button onClick={() => handleDownload(entry.id!)}>
+                              Download
+                            </button>
                             <button
-                              onClick={() => handleRemoveFile(entry.studentId)}
+                              onClick={() =>
+                                setMobilityData((prev) =>
+                                  prev.map((data) =>
+                                    data.studentId === entry.studentId
+                                      ? { ...data, attestationFile: null }
+                                      : data
+                                  )
+                                )
+                              }
                             >
-                              Remove
+                              Delete
                             </button>
                           </>
                         ) : (

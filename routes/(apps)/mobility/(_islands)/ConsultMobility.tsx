@@ -35,9 +35,9 @@ export default function ConsultMobility() {
             destinationCountry: existingMobility?.destinationCountry || null,
             destinationName: existingMobility?.destinationName || null,
             mobilityStatus: existingMobility?.mobilityStatus || "N/A",
-            attestationFile: existingMobility?.attestationFile || null,
             promotionId: student.promotionId,
             promotionName: student.promotionName,
+            attestationFile: existingMobility?.attestationFile || null,
           };
         });
 
@@ -55,6 +55,16 @@ export default function ConsultMobility() {
     selectedPromotion === "all"
       ? mobilityData
       : mobilityData.filter((entry) => entry.promotionId === selectedPromotion);
+
+  const downloadFile = (id: number | null) => {
+    if (!id) {
+      alert("No file available for download.");
+      return;
+    }
+
+    const downloadUrl = `/mobility/api/download/${id}`;
+    window.open(downloadUrl, "_blank");
+  };
 
   return (
     <section>
@@ -117,15 +127,13 @@ export default function ConsultMobility() {
                         <td>{entry.mobilityStatus}</td>
                         <td>
                           {entry.attestationFile ? (
-                            <a
-                              href={`/api/download/${entry.id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={() => downloadFile(entry.id)}
                             >
                               Download
-                            </a>
+                            </button>
                           ) : (
-                            "N/A"
+                            "No file"
                           )}
                         </td>
                       </tr>
