@@ -62,9 +62,30 @@ export const handler: Handlers = {
       if (!Array.isArray(data)) {
         throw new Error("Invalid request body");
       }
+
       console.log("Connecting to mobility database...");
-      using connection = connect("mobility"); 
+      using connection = connect("mobility");
       console.log("Connected to databases.");
+
+      const attachedDatabases = connection.database
+        .prepare("PRAGMA database_list")
+        .all();
+      console.log("Attached databases:", attachedDatabases);
+
+      const tablesInMain = connection.database
+        .prepare("SELECT name FROM sqlite_master WHERE type='table'")
+        .all();
+      console.log("Tables in main:", tablesInMain);
+
+      const tablesInStudents = connection.database
+        .prepare("SELECT name FROM students.sqlite_master WHERE type='table'")
+        .all();
+      console.log("Tables in students:", tablesInStudents);
+
+      const testQuery = connection.database
+        .prepare("SELECT COUNT(*) AS count FROM students.students")
+        .get();
+      console.log(`Test query result: Students table has ${testQuery.count} rows.`);
 
       const insertQuery = connection.database.prepare(
         `INSERT INTO mobility (
@@ -82,7 +103,7 @@ export const handler: Handlers = {
 
       for (const mobility of data) {
         const {
-          id,
+          id = null,
           studentId,
           startDate,
           endDate,
@@ -91,6 +112,16 @@ export const handler: Handlers = {
           destinationName,
           mobilityStatus = "N/A",
         } = mobility;
+
+        console.log(`Checking if studentId ${studentId} exists in students.students`);
+        const studentExists = connection.database
+          .prepare("SELECT COUNT(*) AS count FROM students.students WHERE userId = ?")
+          .get(studentId);
+
+        if (studentExists.count === 0) {
+          console.warn(`Student with ID ${studentId} does not exist. Skipping.`);
+          continue;
+        }
 
         let calculatedWeeksCount = weeksCount;
         if (startDate && endDate) {
