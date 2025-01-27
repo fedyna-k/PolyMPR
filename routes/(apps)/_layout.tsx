@@ -1,22 +1,19 @@
 import { FreshContext } from "$fresh/server.ts";
 import { Partial } from "$fresh/runtime.ts";
-import { State } from "$root/defaults/interfaces.ts";
-import { AppProperties } from "$root/defaults/interfaces.ts";
+import { AuthenticatedState } from "$root/defaults/interfaces.ts";
 import Navbar from "$root/routes/(_islands)/Navbar.tsx";
 
+// deno-lint-ignore require-await
 export default async function AppLayout(
   request: Request,
-  context: FreshContext<State>,
+  context: FreshContext<AuthenticatedState>,
 ) {
   const pathname = new URL(request.url).pathname;
   const currentApp = pathname.split("/")[1];
-  const properties: AppProperties = (await import(
-    `./${currentApp}/(_props)/props.ts`
-  )).default;
 
   return (
     <section id="app">
-      <Navbar currentApp={currentApp} pages={properties.pages} />
+      <Navbar currentApp={currentApp} pages={context.state.availablePages} />
       <section id="app-body">
         <Partial name="body">
           <context.Component />

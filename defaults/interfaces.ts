@@ -1,9 +1,10 @@
 import { type RegularTagNode, type TextNode } from "@melvdouc/xml-parser";
 import { AsyncRoute } from "$fresh/src/server/types.ts";
 
-interface AuthenticatedState {
+export interface AuthenticatedState {
   isAuthenticated: true;
   session: CasContent;
+  availablePages: Record<string, string>;
 }
 
 interface UnauthenticatedState {

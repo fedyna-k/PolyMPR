@@ -29,6 +29,7 @@
     "@popov/jwt": "jsr:@popov/jwt@^1.0.1",
     "@psych/sheet": "jsr:@psych/sheet@^1.0.6",
     "@std/cli": "jsr:@std/cli@^1.0.10",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
     "preact": "https://esm.sh/preact@10.22.0",
     "preact/": "https://esm.sh/preact@10.22.0/",
     "@preact/signals": "https://esm.sh/*@preact/signals@1.2.2",

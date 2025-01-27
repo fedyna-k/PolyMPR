@@ -3,6 +3,7 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
+import * as $_apps_middleware from "./routes/(apps)/_middleware.ts";
 import * as $_apps_mobility_api_insert_mobility from "./routes/(apps)/mobility/api/insert_mobility.ts";
 import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_mobility_partials_admin_edit_mobility from "./routes/(apps)/mobility/partials/(admin)/edit_mobility.tsx";
@@ -39,6 +40,7 @@ import type { Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/(apps)/_layout.tsx": $_apps_layout,
+    "./routes/(apps)/_middleware.ts": $_apps_middleware,
     "./routes/(apps)/mobility/api/insert_mobility.ts":
       $_apps_mobility_api_insert_mobility,
     "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
