@@ -20,7 +20,7 @@ export default function EditMobility() {
           (mobility: any) => mobility.studentId === student.id
         );
         return {
-          id: existingMobility ? existingMobility.id : null, 
+          id: existingMobility ? existingMobility.id : null,
           studentId: student.id,
           firstName: student.firstName,
           lastName: student.lastName,
@@ -32,6 +32,7 @@ export default function EditMobility() {
           mobilityStatus: existingMobility?.mobilityStatus || "N/A",
           promotionId: student.promotionId,
           promotionName: student.promotionName,
+          attestationFile: null,
         };
       });
       setMobilityData(initializedData);
@@ -40,6 +41,20 @@ export default function EditMobility() {
     fetchMobilityData();
   }, []);
 
+  const handleFileChange = (studentId: string, file: File | null) => {
+    if (file && file.type !== "application/pdf") {
+      alert("Only PDF files are allowed.");
+      return;
+    }
+  
+    setMobilityData((prev) =>
+      prev.map((entry) =>
+        entry.studentId === studentId
+          ? { ...entry, attestationFile: file }
+          : entry
+      )
+    );
+  };
   const handleChange = (
     studentId: string,
     field: keyof MobilityData,
@@ -51,16 +66,38 @@ export default function EditMobility() {
       )
     );
   };
+    
 
   const handleSave = async () => {
     setIsSaving(true);
 
     try {
-      console.log("EditMobility: Sending data to API...");
+      console.log("EditMobility: Preparing data for API...");
+      const formData = new FormData();
+
+      mobilityData.forEach((entry) => {
+        const jsonEntry = {
+          id: entry.id,
+          studentId: entry.studentId,
+          startDate: entry.startDate,
+          endDate: entry.endDate,
+          destinationCountry: entry.destinationCountry,
+          destinationName: entry.destinationName,
+          mobilityStatus: entry.mobilityStatus,
+        };
+
+        formData.append("data", JSON.stringify(jsonEntry));
+
+        if (entry.attestationFile) {
+          formData.append(`file_${entry.studentId}`, entry.attestationFile);
+        }
+      });
+
+      console.log("EditMobility: FormData prepared:", [...formData.entries()]);
+
       const response = await fetch("/mobility/api/insert-mobility", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: mobilityData }),
+        body: formData,
       });
 
       if (response.ok) {
@@ -129,6 +166,7 @@ export default function EditMobility() {
                     <th>Destination Country</th>
                     <th>Destination Name</th>
                     <th>Status</th>
+                    <th>Attestation File</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,11 +199,7 @@ export default function EditMobility() {
                           type="text"
                           value={entry.destinationCountry || ""}
                           onChange={(e) =>
-                            handleChange(
-                              entry.studentId,
-                              "destinationCountry",
-                              e.target.value
-                            )
+                            handleChange(entry.studentId, "destinationCountry", e.target.value)
                           }
                         />
                       </td>
@@ -191,6 +225,15 @@ export default function EditMobility() {
                           <option value="Completed">Completed</option>
                           <option value="Validated">Validated</option>
                         </select>
+                      </td>
+                      <td>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={(e) =>
+                            handleFileChange(entry.studentId, e.target.files?.[0] || null)
+                          }
+                        />
                       </td>
                     </tr>
                   ))}

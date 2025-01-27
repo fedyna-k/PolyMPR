@@ -49,53 +49,64 @@ export const handler: Handlers = {
   },
 
   async POST(request) {
-    try {
-      const body = await request.json();
-      const { data } = body;
+    console.log("API /mobility/api/insert-mobility POST called");
 
-      if (!Array.isArray(data)) {
-        throw new Error("Invalid request body");
+    try {
+      const formData = await request.formData();
+      const dataEntries = formData.getAll("data").map((item) => JSON.parse(item as string));
+      console.log("Parsed data entries:", dataEntries);
+
+      const fileMap: Record<string, Uint8Array> = {};
+      for (const [key, value] of formData.entries()) {
+        if (key.startsWith("file_") && value instanceof File) {
+          const studentId = key.split("_")[1]; 
+          const file = value as File;
+          fileMap[studentId] = new Uint8Array(await file.arrayBuffer());
+          console.log(`File processed for studentId ${studentId}`);
+        }
       }
 
       using connection = connect("mobility");
       const insertQuery = connection.database.prepare(
         `INSERT INTO mobility (
-          id, studentId, startDate, endDate, weeksCount, destinationCountry, destinationName, mobilityStatus
+          id, studentId, startDate, endDate, weeksCount, destinationCountry, destinationName, mobilityStatus, attestationFile
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
           startDate = excluded.startDate,
           endDate = excluded.endDate,
           weeksCount = excluded.weeksCount,
           destinationCountry = excluded.destinationCountry,
           destinationName = excluded.destinationName,
-          mobilityStatus = excluded.mobilityStatus`
+          mobilityStatus = excluded.mobilityStatus,
+          attestationFile = excluded.attestationFile`
       );
 
-      for (const mobility of data) {
+      for (const mobility of dataEntries) {
         const {
           id = null,
           studentId,
           startDate,
           endDate,
-          weeksCount,
           destinationCountry,
           destinationName,
           mobilityStatus = "N/A",
         } = mobility;
 
-        let calculatedWeeksCount = weeksCount;
+        let calculatedWeeksCount = null;
         if (startDate && endDate) {
           const start = new Date(startDate);
           const end = new Date(endDate);
           if (start <= end) {
-            const differenceInDays = Math.ceil((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+            const differenceInDays = Math.ceil(
+              (end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)
+            );
             calculatedWeeksCount = Math.floor(differenceInDays / 7);
-          } else {
-            calculatedWeeksCount = null; 
           }
         }
+        const attestationFile = fileMap[studentId] || null;
 
+        console.log(`Inserting/Updating mobility for studentId: ${studentId}`);
         insertQuery.run(
           id,
           studentId,
@@ -104,7 +115,8 @@ export const handler: Handlers = {
           calculatedWeeksCount,
           destinationCountry,
           destinationName,
-          mobilityStatus
+          mobilityStatus,
+          attestationFile
         );
       }
 
