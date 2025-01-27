@@ -4,8 +4,7 @@ import {
   makePartials,
 } from "$root/defaults/makePartials.tsx";
 import { FreshContext } from "$fresh/server.ts";
-import { State } from "$root/routes/_middleware.ts";
-//import EditStudents from "../(_islands)/EditStudents.tsx";
+import { State } from "$root/defaults/interfaces.ts";
 
 // deno-lint-ignore require-await
 async function Students(_request: Request, _context: FreshContext<State>) {

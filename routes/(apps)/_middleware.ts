@@ -6,12 +6,12 @@ import {
 
 export const handler: MiddlewareHandler<AuthenticatedState>[] = [
   /**
-   * Check if user is authenticated and add session to context accordingly.
+   * Get all available pages for current user.
    * @param request The HTTP incomming request.
    * @param context The Fresh context object with custom `AuthenticatedState`.
    * @returns The response from the next middleware.
    */
-  async function checkAuthentication(
+  async function getAllAvailablePages(
     request: Request,
     context: FreshContext<AuthenticatedState>,
   ): Promise<Response> {

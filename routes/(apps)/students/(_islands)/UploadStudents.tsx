@@ -39,7 +39,7 @@ export default function UploadStudents() {
 
           console.log(`Data from sheet ${sheetName}:`, data);
 
-          const response = await fetch("/students/api/insert_students", {
+          const response = await fetch("/students/api/students", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ promoName: sheetName, data }),

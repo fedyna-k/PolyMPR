@@ -5,7 +5,6 @@ const properties: AppProperties = {
   icon: "badge",
   pages: {
     index: "Homepage",
-    overview: "Students overview",
     upload: "Upload students",
     consult: "Consult students",
   },
