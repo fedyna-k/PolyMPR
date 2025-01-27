@@ -30,9 +30,9 @@ export default function EditMobility() {
           destinationCountry: existingMobility?.destinationCountry || null,
           destinationName: existingMobility?.destinationName || null,
           mobilityStatus: existingMobility?.mobilityStatus || "N/A",
+          attestationFile: existingMobility?.attestationFile || null,
           promotionId: student.promotionId,
           promotionName: student.promotionName,
-          attestationFile: null,
         };
       });
       setMobilityData(initializedData);
@@ -46,15 +46,26 @@ export default function EditMobility() {
       alert("Only PDF files are allowed.");
       return;
     }
-  
+
     setMobilityData((prev) =>
       prev.map((entry) =>
         entry.studentId === studentId
-          ? { ...entry, attestationFile: file }
+          ? { ...entry, attestationFile: file || null }
           : entry
       )
     );
   };
+
+  const handleRemoveFile = (studentId: string) => {
+    setMobilityData((prev) =>
+      prev.map((entry) =>
+        entry.studentId === studentId
+          ? { ...entry, attestationFile: null }
+          : entry
+      )
+    );
+  };
+
   const handleChange = (
     studentId: string,
     field: keyof MobilityData,
@@ -66,34 +77,35 @@ export default function EditMobility() {
       )
     );
   };
-    
 
   const handleSave = async () => {
     setIsSaving(true);
 
     try {
-      console.log("EditMobility: Preparing data for API...");
+      console.log("EditMobility: Sending data to API...");
+
       const formData = new FormData();
 
       mobilityData.forEach((entry) => {
-        const jsonEntry = {
-          id: entry.id,
-          studentId: entry.studentId,
-          startDate: entry.startDate,
-          endDate: entry.endDate,
-          destinationCountry: entry.destinationCountry,
-          destinationName: entry.destinationName,
-          mobilityStatus: entry.mobilityStatus,
-        };
+        formData.append(
+          "data",
+          JSON.stringify({
+            id: entry.id,
+            studentId: entry.studentId,
+            startDate: entry.startDate,
+            endDate: entry.endDate,
+            destinationCountry: entry.destinationCountry,
+            destinationName: entry.destinationName,
+            mobilityStatus: entry.mobilityStatus,
+          })
+        );
 
-        formData.append("data", JSON.stringify(jsonEntry));
-
-        if (entry.attestationFile) {
+        if (entry.attestationFile instanceof File) {
           formData.append(`file_${entry.studentId}`, entry.attestationFile);
         }
       });
 
-      console.log("EditMobility: FormData prepared:", [...formData.entries()]);
+      console.log("EditMobility: FormData prepared:", formData);
 
       const response = await fetch("/mobility/api/insert-mobility", {
         method: "POST",
@@ -199,7 +211,11 @@ export default function EditMobility() {
                           type="text"
                           value={entry.destinationCountry || ""}
                           onChange={(e) =>
-                            handleChange(entry.studentId, "destinationCountry", e.target.value)
+                            handleChange(
+                              entry.studentId,
+                              "destinationCountry",
+                              e.target.value
+                            )
                           }
                         />
                       </td>
@@ -227,13 +243,33 @@ export default function EditMobility() {
                         </select>
                       </td>
                       <td>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={(e) =>
-                            handleFileChange(entry.studentId, e.target.files?.[0] || null)
-                          }
-                        />
+                        {entry.attestationFile ? (
+                          <>
+                            <a
+                              href={`/api/download/${entry.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View Current File
+                            </a>
+                            <button
+                              onClick={() => handleRemoveFile(entry.studentId)}
+                            >
+                              Remove
+                            </button>
+                          </>
+                        ) : (
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={(e) =>
+                              handleFileChange(
+                                entry.studentId,
+                                e.target.files?.[0] || null
+                              )
+                            }
+                          />
+                        )}
                       </td>
                     </tr>
                   ))}

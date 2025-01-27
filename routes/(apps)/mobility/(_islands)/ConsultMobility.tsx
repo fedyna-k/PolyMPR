@@ -35,7 +35,7 @@ export default function ConsultMobility() {
             destinationCountry: existingMobility?.destinationCountry || null,
             destinationName: existingMobility?.destinationName || null,
             mobilityStatus: existingMobility?.mobilityStatus || "N/A",
-            attestationFile: existingMobility?.attestationFile || null, // Ajouter le fichier
+            attestationFile: existingMobility?.attestationFile || null,
             promotionId: student.promotionId,
             promotionName: student.promotionName,
           };
