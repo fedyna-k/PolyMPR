@@ -1,90 +1,124 @@
 import { useEffect, useState } from "preact/hooks";
 
 export default function ConsultMobility() {
-  const [data, setData] = useState<
-    | {
-      promotions?: Promotion[];
-      students?: Student[];
-      mobilities?: Mobility[];
-    }
-    | null
-  >(null);
+  const [mobilityData, setMobilityData] = useState<MobilityData[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [selectedPromotion, setSelectedPromotion] = useState<number | "all">("all");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("ConsultMobility: Fetching data from API...");
       try {
+        console.log("ConsultMobility: Fetching data from API...");
         const response = await fetch("/mobility/api/insert-mobility");
-        console.log("ConsultMobility: API response status:", response.status);
-
         if (!response.ok) {
           throw new Error(`Error fetching data: ${response.statusText}`);
         }
 
         const result = await response.json();
         console.log("ConsultMobility: Data fetched successfully:", result);
-        setData(result);
+
+        setPromotions(result.promotions);
+
+        const mergedData = result.students.map((student: any) => {
+          const existingMobility = result.mobilities.find(
+            (mobility: any) => mobility.studentId === student.id
+          );
+          return {
+            id: existingMobility ? existingMobility.id : null, 
+            studentId: student.id,
+            firstName: student.firstName,
+            lastName: student.lastName,
+            startDate: existingMobility?.startDate || null,
+            endDate: existingMobility?.endDate || null,
+            weeksCount: existingMobility?.weeksCount || null,
+            destinationCountry: existingMobility?.destinationCountry || null,
+            destinationName: existingMobility?.destinationName || null,
+            mobilityStatus: existingMobility?.mobilityStatus || "N/A",
+            promotionId: student.promotionId,
+            promotionName: student.promotionName,
+          };
+        });
+
+        setMobilityData(mergedData);
       } catch (err) {
         console.error("ConsultMobility: Error fetching data:", err);
-        setError("Failed to load mobility data. Please try again later.");
+        setError("Failed to load data. Please try again later.");
       }
     };
 
     fetchData();
   }, []);
 
-  if (error) {
-    return <p className="error">{error}</p>;
-  }
-
-  if (!data?.promotions) {
-    return <p>No promotions found.</p>;
-  }
+  const filteredData =
+    selectedPromotion === "all"
+      ? mobilityData
+      : mobilityData.filter((entry) => entry.promotionId === selectedPromotion);
 
   return (
     <section>
       <h2>Consult Mobility</h2>
-      {data.promotions.map((promo) => (
+      {error && <p className="error">{error}</p>}
+
+      <div>
+        <label htmlFor="promotionSelect">Select Promotion: </label>
+        <select
+          id="promotionSelect"
+          value={selectedPromotion}
+          onChange={(e) =>
+            setSelectedPromotion(
+              e.target.value === "all" ? "all" : Number(e.target.value)
+            )
+          }
+        >
+          <option value="all">All Promotions</option>
+          {promotions.map((promo) => (
+            <option key={promo.id} value={promo.id}>
+              {promo.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {promotions.map((promo) => (
         <div key={promo.id}>
-          <h3>Promotion: {promo.name}</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Weeks Count</th>
-                <th>Destination Country</th>
-                <th>Destination Name</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.students
-                ?.filter((student) => student.promotionId === promo.id)
-                .map((student) => {
-                  const mobility = data.mobilities?.find((mob) =>
-                    mob.studentId === student.id
-                  );
-                  return (
-                    <tr key={student.id}>
-                      <td>{student.id}</td>
-                      <td>{student.firstName}</td>
-                      <td>{student.lastName}</td>
-                      <td>{mobility?.startDate || "N/A"}</td>
-                      <td>{mobility?.endDate || "N/A"}</td>
-                      <td>{mobility?.weeksCount ?? "0"}</td>
-                      <td>{mobility?.destinationCountry || "N/A"}</td>
-                      <td>{mobility?.destinationName || "N/A"}</td>
-                      <td>{mobility?.mobilityStatus || "N/A"}</td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
+          {selectedPromotion === "all" || selectedPromotion === promo.id ? (
+            <>
+              <h3>Promotion: {promo.name}</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Weeks Count</th>
+                    <th>Destination Country</th>
+                    <th>Destination Name</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData
+                    .filter((entry) => entry.promotionId === promo.id)
+                    .map((entry) => (
+                      <tr key={entry.studentId}>
+                        <td>{entry.studentId}</td>
+                        <td>{entry.firstName}</td>
+                        <td>{entry.lastName}</td>
+                        <td>{entry.startDate || "N/A"}</td>
+                        <td>{entry.endDate || "N/A"}</td>
+                        <td>{entry.weeksCount || "N/A"}</td>
+                        <td>{entry.destinationCountry || "N/A"}</td>
+                        <td>{entry.destinationName || "N/A"}</td>
+                        <td>{entry.mobilityStatus}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </>
+          ) : null}
         </div>
       ))}
     </section>
