@@ -3,10 +3,12 @@ import { useEffect, useState } from "preact/hooks";
 export default function EditMobility() {
   const [mobilityData, setMobilityData] = useState<MobilityData[]>([]);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [selectedPromotion, setSelectedPromotion] = useState<number | "all">("all");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     async function fetchMobilityData() {
+      console.log("EditMobility: Fetching data from API...");
       const response = await fetch("/mobility/api/insert-mobility");
       const data = await response.json();
       console.log("EditMobility: Data fetched successfully:", data);
@@ -18,7 +20,7 @@ export default function EditMobility() {
           (mobility: any) => mobility.studentId === student.id
         );
         return {
-          id: existingMobility ? existingMobility.id : null,
+          id: existingMobility ? existingMobility.id : null, 
           studentId: student.id,
           firstName: student.firstName,
           lastName: student.lastName,
@@ -52,7 +54,9 @@ export default function EditMobility() {
 
   const handleSave = async () => {
     setIsSaving(true);
+
     try {
+      console.log("EditMobility: Sending data to API...");
       const response = await fetch("/mobility/api/insert-mobility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -74,100 +78,129 @@ export default function EditMobility() {
     }
   };
 
+  const filteredData =
+    selectedPromotion === "all"
+      ? mobilityData
+      : mobilityData.filter((entry) => entry.promotionId === selectedPromotion);
+
   const groupedData = promotions.map((promo) => ({
     promotion: promo.name,
-    students: mobilityData.filter(
-      (entry) => entry.promotionId === promo.id
-    ),
+    students: filteredData.filter((entry) => entry.promotionId === promo.id),
   }));
 
   return (
     <div>
       <h2>Edit Mobility</h2>
+
+      <div>
+        <label htmlFor="promotionSelect">Select Promotion: </label>
+        <select
+          id="promotionSelect"
+          value={selectedPromotion}
+          onChange={(e) =>
+            setSelectedPromotion(
+              e.target.value === "all" ? "all" : Number(e.target.value)
+            )
+          }
+        >
+          <option value="all">All Promotions</option>
+          {promotions.map((promo) => (
+            <option key={promo.id} value={promo.id}>
+              {promo.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {groupedData.map((group) => (
         <div key={group.promotion}>
-          <h3>Promotion: {group.promotion}</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Weeks Count</th>
-                <th>Destination Country</th>
-                <th>Destination Name</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {group.students.map((entry) => (
-                <tr key={entry.studentId}>
-                  <td>{entry.studentId}</td>
-                  <td>{entry.firstName}</td>
-                  <td>{entry.lastName}</td>
-                  <td>
-                    <input
-                      type="date"
-                      value={entry.startDate || ""}
-                      onChange={(e) =>
-                        handleChange(entry.studentId, "startDate", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      value={entry.endDate || ""}
-                      onChange={(e) =>
-                        handleChange(entry.studentId, "endDate", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td>{entry.weeksCount || "0"}</td>
-                  <td>
-                    <input
-                      type="text"
-                      value={entry.destinationCountry || ""}
-                      onChange={(e) =>
-                        handleChange(
-                          entry.studentId,
-                          "destinationCountry",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={entry.destinationName || ""}
-                      onChange={(e) =>
-                        handleChange(entry.studentId, "destinationName", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td>
-                    <select
-                      value={entry.mobilityStatus}
-                      onChange={(e) =>
-                        handleChange(entry.studentId, "mobilityStatus", e.target.value)
-                      }
-                    >
-                      <option value="N/A">N/A</option>
-                      <option value="Planned">Planned</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Validated">Validated</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {group.students.length > 0 && (
+            <>
+              <h3>Promotion: {group.promotion}</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Weeks Count</th>
+                    <th>Destination Country</th>
+                    <th>Destination Name</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {group.students.map((entry) => (
+                    <tr key={entry.studentId}>
+                      <td>{entry.studentId}</td>
+                      <td>{entry.firstName}</td>
+                      <td>{entry.lastName}</td>
+                      <td>
+                        <input
+                          type="date"
+                          value={entry.startDate || ""}
+                          onChange={(e) =>
+                            handleChange(entry.studentId, "startDate", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          value={entry.endDate || ""}
+                          onChange={(e) =>
+                            handleChange(entry.studentId, "endDate", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>{entry.weeksCount || "N/A"}</td>
+                      <td>
+                        <input
+                          type="text"
+                          value={entry.destinationCountry || ""}
+                          onChange={(e) =>
+                            handleChange(
+                              entry.studentId,
+                              "destinationCountry",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={entry.destinationName || ""}
+                          onChange={(e) =>
+                            handleChange(entry.studentId, "destinationName", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <select
+                          value={entry.mobilityStatus}
+                          onChange={(e) =>
+                            handleChange(entry.studentId, "mobilityStatus", e.target.value)
+                          }
+                        >
+                          <option value="N/A">N/A</option>
+                          <option value="Planned">Planned</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Completed">Completed</option>
+                          <option value="Validated">Validated</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
       ))}
+
       <button onClick={handleSave} disabled={isSaving}>
         {isSaving ? "Saving..." : "Confirm"}
       </button>
