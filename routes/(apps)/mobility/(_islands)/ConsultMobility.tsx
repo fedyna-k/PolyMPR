@@ -38,7 +38,7 @@ export default function ConsultMobility() {
     const fetchData = async () => {
       console.log("ConsultMobility: Fetching data from API...");
       try {
-        const response = await fetch("/mobility/api/insert_mobility");
+        const response = await fetch("/mobility/api/insert-mobility");
         console.log("ConsultMobility: API response status:", response.status);
 
         if (!response.ok) {
@@ -99,7 +99,7 @@ export default function ConsultMobility() {
                       <td>{student.lastName}</td>
                       <td>{mobility?.startDate || "N/A"}</td>
                       <td>{mobility?.endDate || "N/A"}</td>
-                      <td>{mobility?.weeksCount ?? "N/A"}</td>
+                      <td>{mobility?.weeksCount ?? "0"}</td>
                       <td>{mobility?.destinationCountry || "N/A"}</td>
                       <td>{mobility?.destinationName || "N/A"}</td>
                       <td>{mobility?.mobilityStatus || "N/A"}</td>

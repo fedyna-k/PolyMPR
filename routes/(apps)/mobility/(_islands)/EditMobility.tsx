@@ -27,7 +27,7 @@ export default function EditMobility() {
 
   useEffect(() => {
     async function fetchMobilityData() {
-      const response = await fetch("/mobility/api/insert_mobility");
+      const response = await fetch("/mobility/api/insert-mobility");
       const data = await response.json();
       console.log("EditMobility: Data fetched successfully:", data);
 
@@ -73,7 +73,7 @@ export default function EditMobility() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch("/mobility/api/insert_mobility", {
+      const response = await fetch("/mobility/api/insert-mobility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: mobilityData }),
@@ -145,7 +145,7 @@ export default function EditMobility() {
                       }
                     />
                   </td>
-                  <td>{entry.weeksCount || "N/A"}</td>
+                  <td>{entry.weeksCount || "0"}</td>
                   <td>
                     <input
                       type="text"

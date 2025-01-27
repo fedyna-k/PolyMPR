@@ -89,9 +89,10 @@ export const handler: Handlers = {
           const start = new Date(startDate);
           const end = new Date(endDate);
           if (start <= end) {
-            calculatedWeeksCount = Math.ceil((end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000));
+            const differenceInDays = Math.ceil((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+            calculatedWeeksCount = Math.floor(differenceInDays / 7);
           } else {
-            calculatedWeeksCount = null;
+            calculatedWeeksCount = null; 
           }
         }
 
