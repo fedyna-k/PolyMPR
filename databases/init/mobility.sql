@@ -6,5 +6,6 @@ CREATE TABLE mobility (
     weeksCount          integer,
     destinationCountry  text,
     destinationName     text,
-    mobilityStatus      text default 'N/A'
+    mobilityStatus      text default 'N/A',
+    attestationFile     blob
 );

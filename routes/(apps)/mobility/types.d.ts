@@ -16,5 +16,6 @@ interface MobilityData {
     mobilityStatus: string;
     promotionId: number;
     promotionName: string;
+    //attestationFile: File | null;
   }
   

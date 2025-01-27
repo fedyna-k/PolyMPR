@@ -155,7 +155,7 @@ export default function EditMobility() {
                           }
                         />
                       </td>
-                      <td>{entry.weeksCount || "N/A"}</td>
+                      <td>{entry.weeksCount || "0"}</td>
                       <td>
                         <input
                           type="text"
