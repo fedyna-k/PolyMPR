@@ -8,9 +8,8 @@ const properties: AppProperties = {
     index: "Homepage",
     overview: "Mobility overview",
     edit_mobility: "Mobility management",
-    consult_students_test: "Test consult students",
   },
-  adminOnly: ["edit_mobility", "consult_students_test"],
+  adminOnly: ["edit_mobility"],
 };
 
 export default properties;
