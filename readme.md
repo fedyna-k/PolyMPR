@@ -1,22 +1,34 @@
 # ✨ PolyMPR ✨
 
-**PolyMPR** (Poly Management Platform for Resources) is a modern, modular framework built on **Deno** and **Fresh**, designed to help organizations transition their HR systems to the cloud. With its **modulith architecture**, PolyMPR simplifies the development, deployment, and maintenance of HR applications, making it the perfect choice for teams looking to modernize their workflows. 🌐
+**PolyMPR** (Poly Management Platform for Resources) is a modern, modular
+framework built on **Deno** and **Fresh**, designed to help organizations
+transition their HR systems to the cloud. With its **modulith architecture**,
+PolyMPR simplifies the development, deployment, and maintenance of HR
+applications, making it the perfect choice for teams looking to modernize their
+workflows. 🌐
 
 ## Features ✨
 
-- **Modular Design**: Easily add, remove, or update features without disrupting the entire system. 🧩
-- **Cloud-Native**: Built for the cloud, enabling seamless integration with cloud services (amU DataCenter). ☁️
+- **Modular Design**: Easily add, remove, or update features without disrupting
+  the entire system. 🧩
+- **Cloud-Native**: Built for the cloud, enabling seamless integration with
+  cloud services (amU DataCenter). ☁️
 - **Deno-Powered**: Utilizes Deno's secure runtime for TypeScript. 🦕
-- **Fresh Framework**: Delivers fast, edge-ready web applications with minimal overhead. ⚡
+- **Fresh Framework**: Delivers fast, edge-ready web applications with minimal
+  overhead. ⚡
 - **HR-Focused**: Tailored to meet the unique needs of INFO's HR. 👩‍💼👨‍💼
 
 ## Getting Started 🛠️
 
 ### Prerequisites
-- **Deno**: Install Deno by following the [official guide](https://deno.land/#installation).
-- **Docker** (optional): Install Docker for containerized deployments. Follow the [Docker installation guide](https://docs.docker.com/get-docker/).
+
+- **Deno**: Install Deno by following the
+  [official guide](https://deno.land/#installation).
+- **Docker** (optional): Install Docker for containerized deployments. Follow
+  the [Docker installation guide](https://docs.docker.com/get-docker/).
 
 ### Installation
+
 1. Clone the PolyMPR repository:
    ```bash
    git clone https://github.com/fedyna-k/PolyMPR.git
@@ -28,7 +40,8 @@
    ```
 3. Access the application at `https://localhost`.
 
-For detailed installation instructions, check out the [Installation Guide](./wiki/installation).
+For detailed installation instructions, check out the
+[Installation Guide](./wiki/installation).
 
 ## Modules Overview 🧩
 
@@ -49,7 +62,9 @@ For detailed CLI usage, check out the [CLI Documentation](./wiki/cli).
 
 ## Contributing 🤝
 
-We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated. Here’s how to get started:
+We welcome contributions from the community! Whether you're fixing bugs, adding
+features, or improving documentation, your help is appreciated. Here’s how to
+get started:
 
 1. Create a new issue.
 2. Create a new branch for your changes:
@@ -70,4 +85,5 @@ Join the PolyMPR community to connect with other users and developers:
 
 ## License 📜
 
-PolyMPR is open-source and released under the **MIT License**. Feel free to use, modify, and distribute it as per the license terms.
+PolyMPR is open-source and released under the **MIT License**. Feel free to use,
+modify, and distribute it as per the license terms.
