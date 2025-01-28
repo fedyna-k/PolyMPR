@@ -32,31 +32,50 @@ function getItself(
 
 /**
  * Gets itself from the database.
- * @param database The database connection
+ * @param database The database connexion
  * @param userId The user ID.
  * @returns Itself from the database.
  */
 function getAll(
   database: Database,
-  userId: string,
-): { student: Student | null; promo: Promotion | null } {
-  const studentQuery = "select * from students where userId = ?";
-  const student: Student | undefined = database.prepare(studentQuery).get(
-    userId,
-  );
+): { students: Student[]; promos: Promotion[] } {
+  const studentsQuery = `
+    select userId, firstName, lastName, mail, promotionId
+    from students inner join promotions
+    on students.promotionId = promotions.id
+    where promotions.current < 6`;
+  const students: Student[] = database.prepare(studentsQuery).all();
 
-  if (!student) {
-    return { student: null, promo: null };
-  }
+  const promosQuery = "select * from promotions where promotions.current < 6";
+  const promos: Promotion[] | undefined = database.prepare(promosQuery).all();
 
-  const promoQuery = "select * from promotions where id = ?";
-  const promo: Promotion | undefined = database.prepare(promoQuery).get(
-    student.promotionId,
-  );
-
-  return { student, promo: promo ?? null };
+  return { students, promos };
 }
 
+/**
+ * Add users to the database.
+ * @param database The database connexion
+ * @param students The students to add
+ * @param promoId The promotion id.
+ */
+function addStudents(database: Database, students: Student[], promoId: string) {
+  const query = `
+    INSERT INTO students 
+    (userId, firstName, lastName, mail, promotionId) 
+    VALUES (?, ?, ?, ?, ?)`;
+
+  const statement = database.prepare(query);
+
+  for (const student of students) {
+    statement.run(
+      student.userId,
+      student.firstName,
+      student.lastName,
+      student.mail,
+      promoId,
+    );
+  }
+}
 
 export const handler: Handlers<null, AuthenticatedState> = {
   /**
@@ -75,9 +94,7 @@ export const handler: Handlers<null, AuthenticatedState> = {
 
     if (context.state.session.eduPersonPrimaryAffiliation == "student") {
       return new Response(
-        JSON.stringify({
-          student: getItself(database, context.state.session.uid),
-        }),
+        JSON.stringify(getItself(database, context.state.session.uid)),
         {
           headers: {
             "content-type": "application/json",
@@ -86,70 +103,49 @@ export const handler: Handlers<null, AuthenticatedState> = {
       );
     }
 
-    const promotions = database.prepare("select id, name from promotions")
-      .all();
-
-    const students = database.prepare(
-      "select userId, firstName, lastName, mail, promotionId from students",
-    ).all();
-
     return new Response(
-      JSON.stringify({ promotions, students }),
+      JSON.stringify(getAll(database)),
       {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+        },
       },
     );
   },
+  /**
+   * Add students in the database.
+   * @param request The HTTP request.
+   * @param _context The Fresh context.
+   * @returns HTTP 201 on successful insert.
+   */
+  async POST(
+    request: Request,
+    _context: FreshContext<AuthenticatedState>,
+  ): Promise<Response> {
+    const { students, promo }: { students: Student[]; promo: string } =
+      await request.json();
 
-  async POST(request) {
-    console.log("API /students/api/insert_students called");
-
-    try {
-      const body = await request.json();
-      const { data, promoName } = body;
-
-      console.log("Received data:", { promoName, data });
-
-      if (!promoName || !Array.isArray(data)) {
-        throw new Error("Invalid request body");
-      }
-
-      using connection = connect("students");
-
-      connection.database.prepare(
-        "INSERT OR IGNORE INTO promotions (name) VALUES (?)",
-      ).run(promoName);
-
-      const promoIdRow: { id: number } = connection.database
-        .prepare("SELECT id FROM promotions WHERE name = ?")
-        .get(promoName)!;
-      const promoId = promoIdRow.id;
-
-      console.log(`Promotion ID for "${promoName}":`, promoId);
-
-      const insertQuery = connection.database.prepare(
-        `INSERT INTO students 
-        (userId, firstName, lastName, mail, promotionId) 
-        VALUES (?, ?, ?, ?, ?)`,
-      );
-
-      for (const student of data) {
-        console.log("Inserting student:", student);
-        insertQuery.run(
-          student.Identifiant,
-          student.Nom,
-          student["Prénom"],
-          student.Mail,
-          promoId,
-        );
-      }
-
-      console.log("All data inserted successfully");
-      return new Response("Data inserted successfully", { status: 201 });
-    } catch (error) {
-      console.error("Error inserting data:", error);
-      return new Response("Failed to insert data", { status: 500 });
+    if (!promo || !promo.match(/^\d{4}-\dA$/) || !Array.isArray(students)) {
+      return new Response(null, { status: 400 });
     }
+
+    using connection = connect("students");
+    const database = connection.database;
+
+    const { endyear, current } = promo.match(
+      /^(?<endyear>\d{4})-(?<current>\d)A$/,
+    )?.groups!;
+
+    database.prepare(
+      "insert or ignore into promotions (endyear, current) values (?, ?)",
+    ).run(endyear, current);
+
+    const { id: promoId }: { id: string } = database
+      .prepare("select id from promotions where endyear = ? and current = ?")
+      .get(endyear, current)!;
+
+    addStudents(database, students, promoId);
+
+    return new Response(null, { status: 201 });
   },
 };

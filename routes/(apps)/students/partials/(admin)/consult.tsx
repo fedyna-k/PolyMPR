@@ -1,4 +1,4 @@
-import ConsultStudents from "$root/routes/(apps)/students/(_islands)/ConsultStudents.tsx";
+import ConsultStudents from "../../(_islands)/ConsultStudents.tsx";
 import {
   getPartialsConfig,
   makePartials,
@@ -10,7 +10,7 @@ import { State } from "$root/defaults/interfaces.ts";
 async function Students(_request: Request, _context: FreshContext<State>) {
   return (
     <>
-      <h1>Manage Promotions</h1>
+      <h2>Consult students</h2>
       <ConsultStudents />
     </>
   );

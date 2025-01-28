@@ -14,11 +14,11 @@ import * as $_apps_notes_partials_admin_courses from "./routes/(apps)/notes/part
 import * as $_apps_notes_partials_index from "./routes/(apps)/notes/partials/index.tsx";
 import * as $_apps_notes_partials_notes from "./routes/(apps)/notes/partials/notes.tsx";
 import * as $_apps_students_api_students from "./routes/(apps)/students/api/students.ts";
-import * as $_apps_students_api_types_d from "./routes/(apps)/students/api/types.d.ts";
 import * as $_apps_students_index from "./routes/(apps)/students/index.tsx";
 import * as $_apps_students_partials_admin_consult from "./routes/(apps)/students/partials/(admin)/consult.tsx";
 import * as $_apps_students_partials_admin_upload from "./routes/(apps)/students/partials/(admin)/upload.tsx";
 import * as $_apps_students_partials_index from "./routes/(apps)/students/partials/index.tsx";
+import * as $_apps_students_types_d from "./routes/(apps)/students/types.d.ts";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
@@ -56,7 +56,6 @@ const manifest = {
     "./routes/(apps)/notes/partials/index.tsx": $_apps_notes_partials_index,
     "./routes/(apps)/notes/partials/notes.tsx": $_apps_notes_partials_notes,
     "./routes/(apps)/students/api/students.ts": $_apps_students_api_students,
-    "./routes/(apps)/students/api/types.d.ts": $_apps_students_api_types_d,
     "./routes/(apps)/students/index.tsx": $_apps_students_index,
     "./routes/(apps)/students/partials/(admin)/consult.tsx":
       $_apps_students_partials_admin_consult,
@@ -64,6 +63,7 @@ const manifest = {
       $_apps_students_partials_admin_upload,
     "./routes/(apps)/students/partials/index.tsx":
       $_apps_students_partials_index,
+    "./routes/(apps)/students/types.d.ts": $_apps_students_types_d,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/_middleware.ts": $_middleware,

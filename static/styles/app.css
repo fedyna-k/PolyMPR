@@ -3,7 +3,7 @@
   padding: 1em 0;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 1em;
+  gap: 4em;
 }
 
 #app > #app-body {
@@ -16,7 +16,7 @@
 }
 
 #app > nav > a {
-  padding: 0.25em 0.5em;
+  padding: 0.5em 4em 0.5em 1em;
   color: light-dark(var(--light-foreground), var(--dark-foreground));
 }
 
@@ -57,5 +57,10 @@
   #app {
     grid-template-rows: auto 1fr;
     grid-template-columns: none;
+    gap: 1em;
+  }
+
+  #app > nav > a {
+    padding: 0.5em 1em;
   }
 }
