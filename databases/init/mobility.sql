@@ -7,5 +7,5 @@ CREATE TABLE mobility (
     destinationCountry  text,
     destinationName     text,
     mobilityStatus      text default 'N/A',
-    foreign key (studentId) references students(userId)
+    attestationFile     blob
 );

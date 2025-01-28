@@ -10,7 +10,7 @@ import { State } from "$root/routes/_middleware.ts";
 async function Mobility(_request: Request, _context: FreshContext<State>) {
   return (
     <>
-      <h1>Edit mobility</h1>
+      <h1>Mobility overview</h1>
       <ConsultMobility />
     </>
   );

@@ -3,11 +3,13 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
-import * as $_apps_mobility_api_insert_mobility from "./routes/(apps)/mobility/api/insert_mobility.ts";
+import * as $_apps_mobility_api_download from "./routes/(apps)/mobility/api/download.ts";
+import * as $_apps_mobility_api_insert_mobility from "./routes/(apps)/mobility/api/insert-mobility.ts";
 import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_mobility_partials_admin_edit_mobility from "./routes/(apps)/mobility/partials/(admin)/edit_mobility.tsx";
 import * as $_apps_mobility_partials_index from "./routes/(apps)/mobility/partials/index.tsx";
 import * as $_apps_mobility_partials_overview from "./routes/(apps)/mobility/partials/overview.tsx";
+import * as $_apps_mobility_types_d from "./routes/(apps)/mobility/types.d.ts";
 import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
 import * as $_apps_notes_partials_admin_courses from "./routes/(apps)/notes/partials/(admin)/courses.tsx";
 import * as $_apps_notes_partials_index from "./routes/(apps)/notes/partials/index.tsx";
@@ -30,7 +32,6 @@ import * as $_islands_AppNavigator from "./routes/(_islands)/AppNavigator.tsx";
 import * as $_islands_Navbar from "./routes/(_islands)/Navbar.tsx";
 import * as $_apps_mobility_islands_ConsultMobility from "./routes/(apps)/mobility/(_islands)/ConsultMobility.tsx";
 import * as $_apps_mobility_islands_EditMobility from "./routes/(apps)/mobility/(_islands)/EditMobility.tsx";
-import * as $_apps_mobility_islands_ImportFile from "./routes/(apps)/mobility/(_islands)/ImportFile.tsx";
 import * as $_apps_students_islands_ConsultStudents from "./routes/(apps)/students/(_islands)/ConsultStudents.tsx";
 import * as $_apps_students_islands_EditStudents from "./routes/(apps)/students/(_islands)/EditStudents.tsx";
 import * as $_apps_students_islands_UploadStudents from "./routes/(apps)/students/(_islands)/UploadStudents.tsx";
@@ -39,7 +40,8 @@ import type { Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/(apps)/_layout.tsx": $_apps_layout,
-    "./routes/(apps)/mobility/api/insert_mobility.ts":
+    "./routes/(apps)/mobility/api/download.ts": $_apps_mobility_api_download,
+    "./routes/(apps)/mobility/api/insert-mobility.ts":
       $_apps_mobility_api_insert_mobility,
     "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
     "./routes/(apps)/mobility/partials/(admin)/edit_mobility.tsx":
@@ -48,6 +50,7 @@ const manifest = {
       $_apps_mobility_partials_index,
     "./routes/(apps)/mobility/partials/overview.tsx":
       $_apps_mobility_partials_overview,
+    "./routes/(apps)/mobility/types.d.ts": $_apps_mobility_types_d,
     "./routes/(apps)/notes/index.tsx": $_apps_notes_index,
     "./routes/(apps)/notes/partials/(admin)/courses.tsx":
       $_apps_notes_partials_admin_courses,
@@ -80,8 +83,6 @@ const manifest = {
       $_apps_mobility_islands_ConsultMobility,
     "./routes/(apps)/mobility/(_islands)/EditMobility.tsx":
       $_apps_mobility_islands_EditMobility,
-    "./routes/(apps)/mobility/(_islands)/ImportFile.tsx":
-      $_apps_mobility_islands_ImportFile,
     "./routes/(apps)/students/(_islands)/ConsultStudents.tsx":
       $_apps_students_islands_ConsultStudents,
     "./routes/(apps)/students/(_islands)/EditStudents.tsx":
