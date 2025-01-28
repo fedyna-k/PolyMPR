@@ -27,6 +27,7 @@ export default async function App(
         <link rel="stylesheet" href="/styles/main.css" />
         <link rel="stylesheet" href="/styles/app.css" />
         <link rel="stylesheet" href="styles/app-cards.css" />
+        <link rel="stylesheet" href="styles/students.css" />
       </head>
       <body f-client-nav>
         <Header link={link} />

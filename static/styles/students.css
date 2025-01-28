@@ -1,0 +1,15 @@
+#self-portrait {
+  display: grid;
+  gap: 1em;
+  grid-template-columns: auto 1fr;
+}
+
+#self-portrait > div:nth-child(2n+1) {
+  font-weight: var(--font-weight-bold);
+}
+
+@media screen and (max-width: 1024px) {
+  #self-portrait {
+    grid-template-columns: 1fr;
+  }
+}

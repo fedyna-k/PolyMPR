@@ -1,6 +1,8 @@
 import { defineConfig } from "$fresh/server.ts";
 import ensureDatabases from "$root/databases/ensure.ts";
+import { load } from "@std/dotenv";
 
+await load({ envPath: "./.env.development.local", export: true });
 await ensureDatabases();
 export default defineConfig({
   server: {

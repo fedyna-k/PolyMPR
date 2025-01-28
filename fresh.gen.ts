@@ -3,6 +3,7 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_apps_layout from "./routes/(apps)/_layout.tsx";
+import * as $_apps_middleware from "./routes/(apps)/_middleware.ts";
 import * as $_apps_mobility_api_insert_mobility from "./routes/(apps)/mobility/api/insert_mobility.ts";
 import * as $_apps_mobility_index from "./routes/(apps)/mobility/index.tsx";
 import * as $_apps_mobility_partials_admin_edit_mobility from "./routes/(apps)/mobility/partials/(admin)/edit_mobility.tsx";
@@ -12,12 +13,12 @@ import * as $_apps_notes_index from "./routes/(apps)/notes/index.tsx";
 import * as $_apps_notes_partials_admin_courses from "./routes/(apps)/notes/partials/(admin)/courses.tsx";
 import * as $_apps_notes_partials_index from "./routes/(apps)/notes/partials/index.tsx";
 import * as $_apps_notes_partials_notes from "./routes/(apps)/notes/partials/notes.tsx";
-import * as $_apps_students_api_insert_students from "./routes/(apps)/students/api/insert_students.ts";
+import * as $_apps_students_api_students from "./routes/(apps)/students/api/students.ts";
 import * as $_apps_students_index from "./routes/(apps)/students/index.tsx";
 import * as $_apps_students_partials_admin_consult from "./routes/(apps)/students/partials/(admin)/consult.tsx";
 import * as $_apps_students_partials_admin_upload from "./routes/(apps)/students/partials/(admin)/upload.tsx";
 import * as $_apps_students_partials_index from "./routes/(apps)/students/partials/index.tsx";
-import * as $_apps_students_partials_overview from "./routes/(apps)/students/partials/overview.tsx";
+import * as $_apps_students_types_d from "./routes/(apps)/students/types.d.ts";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
@@ -39,6 +40,7 @@ import type { Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/(apps)/_layout.tsx": $_apps_layout,
+    "./routes/(apps)/_middleware.ts": $_apps_middleware,
     "./routes/(apps)/mobility/api/insert_mobility.ts":
       $_apps_mobility_api_insert_mobility,
     "./routes/(apps)/mobility/index.tsx": $_apps_mobility_index,
@@ -53,8 +55,7 @@ const manifest = {
       $_apps_notes_partials_admin_courses,
     "./routes/(apps)/notes/partials/index.tsx": $_apps_notes_partials_index,
     "./routes/(apps)/notes/partials/notes.tsx": $_apps_notes_partials_notes,
-    "./routes/(apps)/students/api/insert_students.ts":
-      $_apps_students_api_insert_students,
+    "./routes/(apps)/students/api/students.ts": $_apps_students_api_students,
     "./routes/(apps)/students/index.tsx": $_apps_students_index,
     "./routes/(apps)/students/partials/(admin)/consult.tsx":
       $_apps_students_partials_admin_consult,
@@ -62,8 +63,7 @@ const manifest = {
       $_apps_students_partials_admin_upload,
     "./routes/(apps)/students/partials/index.tsx":
       $_apps_students_partials_index,
-    "./routes/(apps)/students/partials/overview.tsx":
-      $_apps_students_partials_overview,
+    "./routes/(apps)/students/types.d.ts": $_apps_students_types_d,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/_middleware.ts": $_middleware,

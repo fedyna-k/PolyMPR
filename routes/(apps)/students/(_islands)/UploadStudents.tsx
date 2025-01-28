@@ -1,75 +1,111 @@
 // @deno-types="https://cdn.sheetjs.com/xlsx-0.20.3/package/types/index.d.ts"
 import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
-import { useSignal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 
-export default function UploadStudents() {
-  const statusMessage = useSignal<string>("");
-  const fileData = useSignal<File | null>(null);
-
-  const handleFileChange = (event: Event) => {
+/**
+ * Create a new handler for file change that displays
+ * messages in statusMessage and gets file data in fileData.
+ * @param statusMessage The status message signal.
+ * @param fileData The file data signal.
+ * @returns The file change handler.
+ */
+function getFileChangeHandler(
+  statusMessage: Signal<string>,
+  fileData: Signal<File | null>,
+): (event: Event) => void {
+  /**
+   * Handle file change.
+   * @param event The file change event.
+   */
+  return (event: Event) => {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       fileData.value = input.files[0];
-      statusMessage.value = "File selected: " + input.files[0].name;
+      statusMessage.value = `File selected: ${input.files[0].name}`;
     } else {
       fileData.value = null;
       statusMessage.value = "No file selected";
     }
   };
+}
 
-  const confirmUpload = () => {
+/**
+ * Create a new handler that sends data file to server.
+ * @param statusMessage The status message signal.
+ * @param fileData The file data signal.
+ * @returns The file confirmation handler.
+ */
+function getUploadConfirmationFunction(
+  statusMessage: Signal<string>,
+  fileData: Signal<File | null>,
+): () => void {
+  /**
+   * Add students to database.
+   * @returns Confirm upload of students.
+   */
+  return () => {
     if (!fileData.value) {
       statusMessage.value = "Please select a file before confirming upload.";
       return;
     }
 
-    try {
-      const reader = new FileReader();
+    const reader = new FileReader();
 
-      reader.onload = async (e) => {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    /**
+     * Send all data to the server.
+     * @param event The finished progress event.
+     */
+    reader.onload = async (event: ProgressEvent<FileReader>) => {
+      const arrayBuffer = event.target!.result as ArrayBuffer;
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+      let allOK = true;
 
-        for (const sheetName of workbook.SheetNames) {
-          const sheet = workbook.Sheets[sheetName];
-          const data = XLSX.utils.sheet_to_json(sheet, {
-            header: ["Identifiant", "Nom", "Prénom", "Mail"],
-            range: 1, // Ignorer les en-têtes
-          });
+      for (const sheetName of workbook.SheetNames) {
+        const sheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(sheet, {
+          header: ["userId", "lastName", "firstName", "mail"],
+          range: 1,
+        });
 
-          console.log(`Data from sheet ${sheetName}:`, data);
+        const response = await fetch("/students/api/students", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ promoName: sheetName, data }),
+        });
 
-          const response = await fetch("/students/api/insert_students", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ promoName: sheetName, data }),
-          });
-
-          if (!response.ok) {
-            throw new Error(`Failed to insert data for promotion ${sheetName}`);
-          }
+        if (!response.ok) {
+          allOK = false;
         }
+      }
 
-        statusMessage.value = "Data uploaded and inserted successfully!";
-      };
+      statusMessage.value = allOK
+        ? "Failed to insert all data."
+        : "Data uploaded and inserted successfully!";
+    };
 
-      reader.onerror = () => {
-        statusMessage.value = "Error reading the file.";
-      };
+    /**
+     * Display error message if any.
+     */
+    reader.onerror = () => {
+      statusMessage.value = "Error reading the file.";
+    };
 
-      reader.readAsArrayBuffer(fileData.value);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      statusMessage.value = "An unexpected error occurred during upload.";
-    }
+    reader.readAsArrayBuffer(fileData.value);
   };
+}
+
+export default function UploadStudents() {
+  const statusMessage = useSignal<string>("");
+  const fileData = useSignal<File | null>(null);
+
+  const handleFileChange = getFileChangeHandler(statusMessage, fileData);
+  const confirmUpload = getUploadConfirmationFunction(statusMessage, fileData);
 
   return (
-    <div>
-      <h2>Upload Students</h2>
+    <>
       <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
       <button onClick={confirmUpload}>Confirm Upload</button>
       <p>{statusMessage.value}</p>
-    </div>
+    </>
   );
 }
